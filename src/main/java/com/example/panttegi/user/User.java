@@ -49,6 +49,9 @@ public class User extends BaseEntity {
     @Column(name = "profile_url", nullable = true)
     private String profileUrl;
 
+    @Column(name = "name", nullable = false)
+    private String name;
+
     @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
     private UserRole role;
@@ -87,10 +90,11 @@ public class User extends BaseEntity {
         }
     }
 
-    public User(String email, String password, String profileUrl, UserRole role) {
+    public User(String email, String password, String profileUrl, String name, UserRole role) {
         this.email = email;
         this.password = password;
         this.profileUrl = profileUrl;
+        this.name = name;
         this.role = role;
     }
 }
