@@ -34,14 +34,12 @@ public class AuthService {
 
         user.updatePassword(passwordEncoder.encode(user.getPassword()));
 
-        System.out.println(user.getProfileUrl());
-
         return new UserResponseDto(userRepository.save(user));
     }
 
     public LoginResDto login(String email, String password) {
 
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.BAD_REQUEST));
+        User user = userRepository.findByEmailOrElseThrow(email);
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new CustomException(ErrorCode.UNAUTHORIZED_PASSWORD);
