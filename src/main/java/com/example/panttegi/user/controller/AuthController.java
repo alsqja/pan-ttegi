@@ -1,6 +1,8 @@
 package com.example.panttegi.user.controller;
 
 import com.example.panttegi.common.CommonResDto;
+import com.example.panttegi.user.dto.LoginReqDto;
+import com.example.panttegi.user.dto.LoginResDto;
 import com.example.panttegi.user.dto.SignupRequestDto;
 import com.example.panttegi.user.dto.UserResponseDto;
 import com.example.panttegi.user.entity.User;
@@ -27,7 +29,16 @@ public class AuthController {
     ) {
 
         User user = User.toEntity(dto);
-        
+
         return new ResponseEntity<>(new CommonResDto<>("회원가입 완료", authService.signup(user)), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<CommonResDto<LoginResDto>> login(
+            @RequestBody LoginReqDto dto
+    ) {
+        LoginResDto result = authService.login(dto.getEmail(), dto.getPassword());
+
+        return new ResponseEntity<>(new CommonResDto<>("로그인 완료", result), HttpStatus.OK);
     }
 }

@@ -93,6 +93,10 @@ public class User extends BaseEntity {
         this.role = role;
     }
 
+    public void updatePassword(String password) {
+        this.password = password;
+    }
+    
     public static User toEntity(SignupRequestDto dto) {
         return new User(dto.getEmail(), dto.getPassword(), dto.getProfileUrl(), dto.getName(), dto.getRole());
     }
