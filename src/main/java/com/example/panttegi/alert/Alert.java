@@ -1,7 +1,6 @@
-package com.example.panttegi.file;
+package com.example.panttegi.alert;
 
-import com.example.panttegi.card.Card;
-import com.example.panttegi.user.User;
+import com.example.panttegi.workspace.Workspace;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,25 +16,21 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "file")
+@Table(name = "alert")
 @Getter
 @NoArgsConstructor
-public class File {
+public class Alert {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "url", nullable = false)
-    private String url;
+    @Column(name = "message")
+    private String message;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    @ManyToOne
-    @JoinColumn(name = "card_id")
-    private Card card;
+    @JoinColumn(name = "workspace_id")
+    private Workspace workspace;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -47,9 +42,8 @@ public class File {
         }
     }
 
-    public File(String url, User user, Card card) {
-        this.url = url;
-        this.user = user;
-        this.card = card;
+    public Alert(String message, Workspace workspace) {
+        this.message = message;
+        this.workspace = workspace;
     }
 }

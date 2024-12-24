@@ -18,13 +18,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +32,7 @@ import java.util.List;
 @Table(name = "`user`")
 @Getter
 @NoArgsConstructor
-@SQLDelete(sql = "UPDATE user SET is_deleted = true WHERE id = ?")
+@SQLDelete(sql = "UPDATE user SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
 @SQLRestriction("is_deleted is false")
 public class User extends BaseEntity {
 
@@ -56,8 +56,8 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    @Column(name = "is_deleted", nullable = false)
-    private Boolean isDeleted;
+    @Column(name = "deleted_at", nullable = true)
+    private LocalDateTime deletedAt;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Workspace> workspaces = new ArrayList<>();
@@ -82,13 +82,6 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     List<File> files = new ArrayList<>();
-
-    @PrePersist
-    public void setDefaultIsDeleted() {
-        if (this.isDeleted == null) {
-            this.isDeleted = false;
-        }
-    }
 
     public User(String email, String password, String profileUrl, String name, UserRole role) {
         this.email = email;
