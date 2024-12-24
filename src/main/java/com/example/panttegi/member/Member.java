@@ -2,7 +2,7 @@ package com.example.panttegi.member;
 
 import com.example.panttegi.common.BaseEntity;
 import com.example.panttegi.enums.MemberRole;
-import com.example.panttegi.user.User;
+import com.example.panttegi.user.entity.User;
 import com.example.panttegi.workspace.Workspace;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

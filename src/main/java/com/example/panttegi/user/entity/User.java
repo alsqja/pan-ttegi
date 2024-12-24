@@ -1,4 +1,4 @@
-package com.example.panttegi.user;
+package com.example.panttegi.user.entity;
 
 import com.example.panttegi.board.Board;
 import com.example.panttegi.card.Card;
@@ -8,6 +8,7 @@ import com.example.panttegi.enums.UserRole;
 import com.example.panttegi.file.File;
 import com.example.panttegi.list.BoardList;
 import com.example.panttegi.member.Member;
+import com.example.panttegi.user.dto.SignupRequestDto;
 import com.example.panttegi.workspace.Workspace;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -23,6 +24,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
+import org.jetbrains.annotations.TestOnly;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -84,6 +86,20 @@ public class User extends BaseEntity {
     List<File> files = new ArrayList<>();
 
     public User(String email, String password, String profileUrl, String name, UserRole role) {
+        this.email = email;
+        this.password = password;
+        this.profileUrl = profileUrl;
+        this.name = name;
+        this.role = role;
+    }
+
+    public static User toEntity(SignupRequestDto dto) {
+        return new User(dto.getEmail(), dto.getPassword(), dto.getProfileUrl(), dto.getName(), dto.getRole());
+    }
+
+    @TestOnly
+    public User(Long id, String email, String password, String profileUrl, String name, UserRole role) {
+        this.id = id;
         this.email = email;
         this.password = password;
         this.profileUrl = profileUrl;
