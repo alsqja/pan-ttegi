@@ -1,4 +1,4 @@
-package com.example.panttegi.workspace;
+package com.example.panttegi.workspace.entity;
 
 import com.example.panttegi.board.Board;
 import com.example.panttegi.common.BaseEntity;

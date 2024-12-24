@@ -9,7 +9,7 @@ import com.example.panttegi.file.File;
 import com.example.panttegi.list.BoardList;
 import com.example.panttegi.member.Member;
 import com.example.panttegi.user.dto.SignupRequestDto;
-import com.example.panttegi.workspace.Workspace;
+import com.example.panttegi.workspace.entity.Workspace;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
