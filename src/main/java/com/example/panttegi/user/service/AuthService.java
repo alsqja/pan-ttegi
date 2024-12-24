@@ -34,6 +34,8 @@ public class AuthService {
 
         user.updatePassword(passwordEncoder.encode(user.getPassword()));
 
+        System.out.println(user.getProfileUrl());
+
         return new UserResponseDto(userRepository.save(user));
     }
 
