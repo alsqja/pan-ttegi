@@ -7,7 +7,6 @@ import com.example.panttegi.member.Member;
 import com.example.panttegi.member.repository.MemberRepository;
 import com.example.panttegi.user.entity.User;
 import com.example.panttegi.user.repository.UserRepository;
-import com.example.panttegi.workspace.dto.WorkspaceRequestDto;
 import com.example.panttegi.workspace.dto.WorkspaceResponseDto;
 import com.example.panttegi.workspace.entity.Workspace;
 import com.example.panttegi.workspace.repository.WorkspaceRepository;
@@ -24,7 +23,7 @@ public class WorkspaceService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public WorkspaceResponseDto createWorkspace(WorkspaceRequestDto requestDto, Long userId){
+    public WorkspaceResponseDto createWorkspace(String name, String description, Long userId){
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
 
@@ -32,7 +31,9 @@ public class WorkspaceService {
             throw new CustomException(ErrorCode.UNAUTHORIZED_PERMISSION);
         }
 
-        Workspace workspace = workspaceRepository.save(new Workspace(requestDto.getName(),requestDto.getDescription(), user));
+        Workspace workspace = workspaceRepository.save(
+                new Workspace(name, description, user)
+        );
 
         Member member = new Member(MemberRole.WORKSPACE, user, workspace);
         memberRepository.save(member);
