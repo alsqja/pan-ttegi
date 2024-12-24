@@ -1,5 +1,6 @@
 package com.example.panttegi.error.errorcode;
 
+import com.example.panttegi.error.exception.CustomException;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
@@ -30,5 +31,14 @@ public enum ErrorCode {
     ErrorCode(HttpStatus httpStatus, String message) {
         this.httpStatus = httpStatus;
         this.message = message;
+    }
+
+    public static ErrorCode fromName(String name) throws CustomException {
+        for (ErrorCode code : ErrorCode.values()) {
+            if (code.name().equalsIgnoreCase(name)) {
+                return code;
+            }
+        }
+        throw new CustomException(ErrorCode.BAD_INPUT);
     }
 }
