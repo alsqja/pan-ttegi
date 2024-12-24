@@ -33,7 +33,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @SQLDelete(sql = "UPDATE user SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
-@SQLRestriction("is_deleted is false")
+@SQLRestriction("deleted_at is null")
 public class User extends BaseEntity {
 
     @Id

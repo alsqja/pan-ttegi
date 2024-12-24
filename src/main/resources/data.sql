@@ -1,15 +1,15 @@
-INSERT INTO user (email, password, name, profile_url, role, is_deleted, created_at, updated_at)
+INSERT INTO user (email, password, name, profile_url, role, deleted_at, created_at, updated_at)
 VALUES ('email1@email.com', 'password', 'name1', 'https://ca.slack-edge.com/T06B9PCLY1E-U07KRNHKXUM-4ddfb9e4780d-512',
-        'ADMIN', false, CURRENT_DATE, CURRENT_DATE);
-INSERT INTO user (email, password, name, profile_url, role, is_deleted, created_at, updated_at)
+        'ADMIN', null, CURRENT_DATE, CURRENT_DATE);
+INSERT INTO user (email, password, name, profile_url, role, deleted_at, created_at, updated_at)
 VALUES ('email2@email.com', 'password', 'name2', 'https://ca.slack-edge.com/T06B9PCLY1E-U07KRNHKXUM-4ddfb9e4780d-512',
-        'USER', false, CURRENT_DATE, CURRENT_DATE);
-INSERT INTO user (email, password, name, profile_url, role, is_deleted, created_at, updated_at)
+        'USER', null, CURRENT_DATE, CURRENT_DATE);
+INSERT INTO user (email, password, name, profile_url, role, deleted_at, created_at, updated_at)
 VALUES ('email3@email.com', 'password', 'name3', 'https://ca.slack-edge.com/T06B9PCLY1E-U07KRNHKXUM-4ddfb9e4780d-512',
-        'USER', false, CURRENT_DATE, CURRENT_DATE);
-INSERT INTO user (email, password, name, profile_url, role, is_deleted, created_at, updated_at)
+        'USER', null, CURRENT_DATE, CURRENT_DATE);
+INSERT INTO user (email, password, name, profile_url, role, deleted_at, created_at, updated_at)
 VALUES ('email4@email.com', 'password', 'name4', 'https://ca.slack-edge.com/T06B9PCLY1E-U07KRNHKXUM-4ddfb9e4780d-512',
-        'USER', false, CURRENT_DATE, CURRENT_DATE);
+        'USER', null, CURRENT_DATE, CURRENT_DATE);
 
 INSERT INTO workspace (user_id, name, description, created_at, updated_at)
 VALUES (1, 'name', 'description', CURRENT_DATE, CURRENT_DATE);
