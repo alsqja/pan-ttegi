@@ -4,7 +4,7 @@ import com.example.panttegi.comment.Comment;
 import com.example.panttegi.common.BaseEntity;
 import com.example.panttegi.file.File;
 import com.example.panttegi.list.BoardList;
-import com.example.panttegi.user.User;
+import com.example.panttegi.user.entity.User;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

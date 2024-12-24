@@ -3,7 +3,7 @@ package com.example.panttegi.workspace;
 import com.example.panttegi.board.Board;
 import com.example.panttegi.common.BaseEntity;
 import com.example.panttegi.member.Member;
-import com.example.panttegi.user.User;
+import com.example.panttegi.user.entity.User;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

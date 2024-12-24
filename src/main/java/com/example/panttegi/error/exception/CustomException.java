@@ -4,7 +4,7 @@ import com.example.panttegi.error.errorcode.ErrorCode;
 import lombok.Getter;
 
 @Getter
-public class CustomException extends Exception {
+public class CustomException extends RuntimeException {
 
     private final ErrorCode errorCode;
 

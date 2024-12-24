@@ -1,4 +1,4 @@
-package com.example.panttegi.user;
+package com.example.panttegi.user.entity;
 
 import com.example.panttegi.board.Board;
 import com.example.panttegi.card.Card;
@@ -8,6 +8,7 @@ import com.example.panttegi.enums.UserRole;
 import com.example.panttegi.file.File;
 import com.example.panttegi.list.BoardList;
 import com.example.panttegi.member.Member;
+import com.example.panttegi.user.dto.SignupRequestDto;
 import com.example.panttegi.workspace.Workspace;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -89,5 +90,9 @@ public class User extends BaseEntity {
         this.profileUrl = profileUrl;
         this.name = name;
         this.role = role;
+    }
+
+    public static User toEntity(SignupRequestDto dto) {
+        return new User(dto.getEmail(), dto.getPassword(), dto.getProfileUrl(), dto.getName(), dto.getRole());
     }
 }
