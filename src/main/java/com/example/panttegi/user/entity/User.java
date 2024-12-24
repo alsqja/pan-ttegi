@@ -24,6 +24,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
+import org.jetbrains.annotations.TestOnly;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -94,5 +95,15 @@ public class User extends BaseEntity {
 
     public static User toEntity(SignupRequestDto dto) {
         return new User(dto.getEmail(), dto.getPassword(), dto.getProfileUrl(), dto.getName(), dto.getRole());
+    }
+
+    @TestOnly
+    public User(Long id, String email, String password, String profileUrl, String name, UserRole role) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.profileUrl = profileUrl;
+        this.name = name;
+        this.role = role;
     }
 }
