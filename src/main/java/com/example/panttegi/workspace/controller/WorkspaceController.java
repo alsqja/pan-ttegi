@@ -43,4 +43,14 @@ public class WorkspaceController {
 
         return new ResponseEntity<>(new CommonListResDto<>("워크스페이스 전체 조회 완료", workspaces), HttpStatus.OK);
     }
+
+    @GetMapping("/{workspaceId}")
+    public ResponseEntity<CommonResDto<WorkspaceResponseDto>> getWorkspace(
+            @PathVariable Long workspaceId,
+            Authentication authentication
+    ) {
+        WorkspaceResponseDto workspace = workspaceService.getWorkspace(workspaceId, authentication.getName());
+
+        return new ResponseEntity<>(new CommonResDto<>("워크스페이스 단일 조회 완료", workspace), HttpStatus.OK);
+    }
 }
