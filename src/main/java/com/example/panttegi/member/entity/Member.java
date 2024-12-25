@@ -1,9 +1,9 @@
-package com.example.panttegi.member;
+package com.example.panttegi.member.entity;
 
 import com.example.panttegi.common.BaseEntity;
 import com.example.panttegi.enums.MemberRole;
 import com.example.panttegi.user.entity.User;
-import com.example.panttegi.workspace.Workspace;
+import com.example.panttegi.workspace.entity.Workspace;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
