@@ -23,8 +23,8 @@ public class WorkspaceService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public WorkspaceResponseDto createWorkspace(String name, String description, Long userId) {
-        User user = userRepository.findByIdOrThrow(userId);
+    public WorkspaceResponseDto createWorkspace(String name, String description, String email) {
+        User user = userRepository.findByEmailOrElseThrow(email);
 
         if (!user.getRole().name().equals("ADMIN")) {
             throw new CustomException(ErrorCode.UNAUTHORIZED_PERMISSION);
