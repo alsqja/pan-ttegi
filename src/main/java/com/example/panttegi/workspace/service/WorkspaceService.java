@@ -3,7 +3,7 @@ package com.example.panttegi.workspace.service;
 import com.example.panttegi.enums.MemberRole;
 import com.example.panttegi.error.errorcode.ErrorCode;
 import com.example.panttegi.error.exception.CustomException;
-import com.example.panttegi.member.Member;
+import com.example.panttegi.member.entity.Member;
 import com.example.panttegi.member.repository.MemberRepository;
 import com.example.panttegi.user.entity.User;
 import com.example.panttegi.user.repository.UserRepository;
@@ -23,10 +23,10 @@ public class WorkspaceService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public WorkspaceResponseDto createWorkspace(String name, String description, Long userId){
+    public WorkspaceResponseDto createWorkspace(String name, String description, Long userId) {
         User user = userRepository.findByIdOrThrow(userId);
 
-        if(!user.getRole().name().equals("ADMIN")){
+        if (!user.getRole().name().equals("ADMIN")) {
             throw new CustomException(ErrorCode.UNAUTHORIZED_PERMISSION);
         }
 

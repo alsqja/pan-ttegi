@@ -1,43 +1,35 @@
-package com.example.panttegi.board;
+package com.example.panttegi.member.entity;
 
 import com.example.panttegi.common.BaseEntity;
-import com.example.panttegi.list.BoardList;
+import com.example.panttegi.enums.MemberRole;
 import com.example.panttegi.user.entity.User;
 import com.example.panttegi.workspace.entity.Workspace;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
-@Table(name = "board")
+@Table(name = "member")
 @Getter
 @NoArgsConstructor
-public class Board extends BaseEntity {
+public class Member extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "color", nullable = true)
-    private String color;
-
-    @Column(name = "image_url", nullable = true)
-    private String imageUrl;
-
-    @Column(name = "name", nullable = false)
-    private String name;
+    @Column(name = "role", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private MemberRole role;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -47,13 +39,8 @@ public class Board extends BaseEntity {
     @JoinColumn(name = "workspace_id")
     private Workspace workspace;
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<BoardList> boardLists = new ArrayList<>();
-
-    public Board(String color, String imageUrl, String name, User user, Workspace workspace) {
-        this.color = color;
-        this.imageUrl = imageUrl;
-        this.name = name;
+    public Member(MemberRole role, User user, Workspace workspace) {
+        this.role = role;
         this.user = user;
         this.workspace = workspace;
     }

@@ -1,6 +1,6 @@
 package com.example.panttegi.list;
 
-import com.example.panttegi.board.Board;
+import com.example.panttegi.board.entity.Board;
 import com.example.panttegi.card.Card;
 import com.example.panttegi.common.BaseEntity;
 import com.example.panttegi.user.entity.User;
