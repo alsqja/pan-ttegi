@@ -53,4 +53,15 @@ public class BoardService {
 
         return new BoardResDto(boardRepository.save(board));
     }
+
+    public void deleteBoard(Long workspaceId, Long boardId, String email) {
+
+        Board board = boardRepository.findByEmailAndWorkspaceAndId(email, workspaceId, boardId);
+
+        if (board == null) {
+            throw new CustomException(ErrorCode.NOT_FOUND);
+        }
+
+        boardRepository.delete(board);
+    }
 }

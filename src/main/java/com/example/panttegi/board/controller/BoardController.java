@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -50,5 +51,17 @@ public class BoardController {
         BoardResDto result = boardService.updateBoard(boardForUpdate);
 
         return new ResponseEntity<>(new CommonResDto<>("보드 수정 완료", result), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{boardId}")
+    public ResponseEntity<Void> deleteBoard(
+            @PathVariable Long workspaceId,
+            @PathVariable Long boardId,
+            Authentication authentication
+    ) {
+
+        boardService.deleteBoard(workspaceId, boardId, authentication.getName());
+        
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
