@@ -1,5 +1,6 @@
 package com.example.panttegi.board.controller;
 
+import com.example.panttegi.board.dto.BoardDetailResDto;
 import com.example.panttegi.board.dto.BoardReqDto;
 import com.example.panttegi.board.dto.BoardResDto;
 import com.example.panttegi.board.entity.Board;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,6 +41,18 @@ public class BoardController {
         return new ResponseEntity<>(new CommonResDto<>("보드 생성 완료", result), HttpStatus.CREATED);
     }
 
+    @GetMapping("/{boardId}")
+    public ResponseEntity<CommonResDto<BoardDetailResDto>> findBoard(
+            @PathVariable Long workspaceId,
+            @PathVariable Long boardId,
+            Authentication authentication
+    ) {
+
+        BoardDetailResDto result = boardService.findBoard(workspaceId, boardId, authentication.getName());
+
+        return new ResponseEntity<>(new CommonResDto<>("보드 단일 조회 완료", result), HttpStatus.OK);
+    }
+
     @PatchMapping("/{boardId}")
     public ResponseEntity<CommonResDto<BoardResDto>> updateBoard(
             @RequestBody BoardReqDto dto,
@@ -61,7 +75,7 @@ public class BoardController {
     ) {
 
         boardService.deleteBoard(workspaceId, boardId, authentication.getName());
-        
+
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
