@@ -7,10 +7,14 @@ import com.example.panttegi.user.dto.SignupRequestDto;
 import com.example.panttegi.user.dto.UserResponseDto;
 import com.example.panttegi.user.entity.User;
 import com.example.panttegi.user.service.AuthService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,5 +44,19 @@ public class AuthController {
         LoginResDto result = authService.login(dto.getEmail(), dto.getPassword());
 
         return new ResponseEntity<>(new CommonResDto<>("로그인 완료", result), HttpStatus.OK);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Authentication authentication
+    ) {
+
+        if (authentication != null && authentication.isAuthenticated()) {
+            new SecurityContextLogoutHandler().logout(request, response, authentication);
+        }
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
