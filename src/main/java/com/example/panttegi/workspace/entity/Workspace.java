@@ -4,16 +4,7 @@ import com.example.panttegi.board.entity.Board;
 import com.example.panttegi.common.BaseEntity;
 import com.example.panttegi.member.entity.Member;
 import com.example.panttegi.user.entity.User;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -50,5 +41,10 @@ public class Workspace extends BaseEntity {
         this.name = name;
         this.description = description;
         this.user = user;
+    }
+
+    public void workspaceUpdate(String name, String description) {
+        this.name = name;
+        this.description = description;
     }
 }

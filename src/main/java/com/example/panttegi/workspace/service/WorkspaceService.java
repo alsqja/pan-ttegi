@@ -64,4 +64,20 @@ public class WorkspaceService {
 
         return new WorkspaceResponseDto(workspace);
     }
+
+    @Transactional
+    public WorkspaceResponseDto updateWorkspace(Long workspaceId, String name, String description, String email) {
+        User user = userRepository.findByEmailOrElseThrow(email);
+
+        Workspace workspace = workspaceRepository.findByIdOrElseThrow(workspaceId);
+
+        Member member = memberRepository.findByUserAndWorkspaceOrElseThrow(user, workspace);
+        if (!member.getRole().equals(MemberRole.WORKSPACE)) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED_PERMISSION);
+        }
+
+        workspace.workspaceUpdate(name, description);
+
+        return new WorkspaceResponseDto(workspace);
+    }
 }

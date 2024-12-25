@@ -53,4 +53,20 @@ public class WorkspaceController {
 
         return new ResponseEntity<>(new CommonResDto<>("워크스페이스 단일 조회 완료", workspace), HttpStatus.OK);
     }
+
+    @PatchMapping("/{workspaceId}")
+    public ResponseEntity<CommonResDto<WorkspaceResponseDto>> updateWorkspace(
+            @PathVariable Long workspaceId,
+            @Valid @RequestBody WorkspaceRequestDto workspaceRequestDto,
+            Authentication authentication
+    ) {
+        WorkspaceResponseDto workspace = workspaceService.updateWorkspace(
+                workspaceId,
+                workspaceRequestDto.getName(),
+                workspaceRequestDto.getDescription(),
+                authentication.getName()
+        );
+
+        return new ResponseEntity<>(new CommonResDto<>("워크스페이스 수정 완료", workspace), HttpStatus.OK);
+    }
 }
