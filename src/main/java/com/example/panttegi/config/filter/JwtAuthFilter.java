@@ -2,6 +2,7 @@ package com.example.panttegi.config.filter;
 
 import com.example.panttegi.util.AuthenticationScheme;
 import com.example.panttegi.util.JwtProvider;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,12 +14,16 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
+
+import static com.example.panttegi.config.WebConfig.WHITE_LIST;
 
 @Component
 @RequiredArgsConstructor
@@ -28,22 +33,37 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final JwtProvider jwtProvider;
 
     private final UserDetailsService userDetailsService;
+    private final AuthenticationEntryPoint authenticationEntryPoint;
 
     @Override
     protected void doFilterInternal(
             HttpServletRequest request, HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
-        authenticate(request);
+
+        try {
+            if (!isWhiteListed(request.getRequestURI())) {
+                authenticate(request, response);
+            }
+        } catch (Exception e) {
+            request.setAttribute("exception", e);
+        }
+
         filterChain.doFilter(request, response);
     }
 
-    private void authenticate(HttpServletRequest request) {
+    private boolean isWhiteListed(String requestUri) {
+        return Arrays.stream(WHITE_LIST)
+                .anyMatch(requestUri::startsWith);
+    }
+
+    private void authenticate(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         String token = getTokenFromRequest(request);
         if (!jwtProvider.validToken(token)) {
             //  refreshToken 설정?
-            return;
+            throw new JwtException("Invalid or expired JWT token");
+//            return;
         }
 
         String username = jwtProvider.getUsername(token);

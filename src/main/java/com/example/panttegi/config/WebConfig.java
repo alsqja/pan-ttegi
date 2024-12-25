@@ -13,7 +13,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -23,10 +25,10 @@ public class WebConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
-//    private final AuthenticationEntryPoint authEntryPoint;
-//    private final AccessDeniedHandler accessDeniedHandler;
+    private final AuthenticationEntryPoint authEntryPoint;
+    private final AccessDeniedHandler accessDeniedHandler;
 
-    private static final String[] WHITE_LIST = {"/api/auth/login", "/api/auth/signup", "/error"};
+    public static final String[] WHITE_LIST = {"/api/auth/login", "/api/auth/signup", "/error"};
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -39,10 +41,10 @@ public class WebConfig {
 //                                .requestMatchers("/admin/**").hasRole("ADMIN")
                                         .anyRequest().authenticated()
                 )
-//                .exceptionHandling(handler -> handler
-//                        .authenticationEntryPoint(authEntryPoint)
-//                        .accessDeniedHandler(accessDeniedHandler)
-//                )
+                .exceptionHandling(handler -> handler
+                        .authenticationEntryPoint(authEntryPoint)
+                        .accessDeniedHandler(accessDeniedHandler)
+                )
                 .sessionManagement(
                         session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
