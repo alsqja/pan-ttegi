@@ -24,8 +24,7 @@ public class WorkspaceService {
 
     @Transactional
     public WorkspaceResponseDto createWorkspace(String name, String description, Long userId){
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+        User user = userRepository.findByIdOrThrow(userId);
 
         if(!user.getRole().name().equals("ADMIN")){
             throw new CustomException(ErrorCode.UNAUTHORIZED_PERMISSION);
