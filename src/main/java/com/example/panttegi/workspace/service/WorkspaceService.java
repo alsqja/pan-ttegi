@@ -14,6 +14,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class WorkspaceService {
@@ -38,5 +41,16 @@ public class WorkspaceService {
         memberRepository.save(member);
 
         return new WorkspaceResponseDto(workspace);
+    }
+
+    @Transactional
+    public List<WorkspaceResponseDto> getAllWorkspaces(String email) {
+        User user = userRepository.findByEmailOrElseThrow(email);
+
+        List<Member> members = memberRepository.findByAllUserOrElseThrow(user);
+
+        return members.stream()
+                .map(member -> new WorkspaceResponseDto(member.getWorkspace()))
+                .collect(Collectors.toList());
     }
 }

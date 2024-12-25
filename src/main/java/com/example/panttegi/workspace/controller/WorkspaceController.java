@@ -1,5 +1,6 @@
 package com.example.panttegi.workspace.controller;
 
+import com.example.panttegi.common.CommonListResDto;
 import com.example.panttegi.common.CommonResDto;
 import com.example.panttegi.workspace.dto.WorkspaceRequestDto;
 import com.example.panttegi.workspace.dto.WorkspaceResponseDto;
@@ -9,10 +10,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/workspaces")
@@ -33,5 +33,14 @@ public class WorkspaceController {
         );
 
         return new ResponseEntity<>(new CommonResDto<>("워크스페이스 생성 완료", workspace), HttpStatus.CREATED);
+    }
+
+    @GetMapping
+    public ResponseEntity<CommonListResDto<WorkspaceResponseDto>> getAllWorkspaces(
+            Authentication authentication
+    ) {
+        List<WorkspaceResponseDto> workspaces = workspaceService.getAllWorkspaces(authentication.getName());
+
+        return new ResponseEntity<>(new CommonListResDto<>("워크스페이스 전체 조회 완료", workspaces), HttpStatus.OK);
     }
 }
