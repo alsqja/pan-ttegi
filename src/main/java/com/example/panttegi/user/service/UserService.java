@@ -48,4 +48,15 @@ public class UserService {
             throw new CustomException(ErrorCode.UNAUTHORIZED_PASSWORD);
         }
     }
+
+    public void deleteUser(Long id, String email) {
+
+        User user = userRepository.findByEmailOrElseThrow(email);
+
+        if (!user.getId().equals(id)) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED_USER);
+        }
+
+        userRepository.delete(user);
+    }
 }
