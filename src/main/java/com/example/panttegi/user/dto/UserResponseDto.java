@@ -15,6 +15,7 @@ public class UserResponseDto implements BaseDtoDataType {
     private final Long id;
     private final String email;
     private final String name;
+    private final String profileUrl;
     private final UserRole role;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
@@ -23,6 +24,7 @@ public class UserResponseDto implements BaseDtoDataType {
         this.id = user.getId();
         this.email = user.getEmail();
         this.name = user.getName();
+        this.profileUrl = user.getProfileUrl();
         this.role = user.getRole();
         this.createdAt = user.getCreatedAt();
         this.updatedAt = user.getUpdatedAt();
