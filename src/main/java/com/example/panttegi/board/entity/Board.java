@@ -1,6 +1,5 @@
 package com.example.panttegi.board.entity;
 
-import com.example.panttegi.board.dto.CreateBoardReqDto;
 import com.example.panttegi.common.BaseEntity;
 import com.example.panttegi.list.BoardList;
 import com.example.panttegi.user.entity.User;
@@ -59,10 +58,10 @@ public class Board extends BaseEntity {
         this.workspace = workspace;
     }
 
-    public Board(CreateBoardReqDto dto) {
-        this.color = dto.getColor();
-        this.imageUrl = dto.getImageUrl();
-        this.name = dto.getName();
+    public Board(String color, String imageUrl, String name) {
+        this.color = color;
+        this.imageUrl = imageUrl;
+        this.name = name;
     }
 
     public void updateUser(User user) {
@@ -71,5 +70,17 @@ public class Board extends BaseEntity {
 
     public void updateWorkspace(Workspace workspace) {
         this.workspace = workspace;
+    }
+
+    public void patchField(String color, String imageUrl, String name) {
+        if (color != null) {
+            this.color = color;
+        }
+        if (imageUrl != null) {
+            this.imageUrl = imageUrl;
+        }
+        if (name != null) {
+            this.name = name;
+        }
     }
 }

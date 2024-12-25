@@ -32,7 +32,7 @@ public class AuthController {
             @Valid @RequestBody SignupRequestDto dto
     ) {
 
-        User user = User.toEntity(dto);
+        User user = dto.toEntity();
 
         return new ResponseEntity<>(new CommonResDto<>("회원가입 완료", authService.signup(user)), HttpStatus.CREATED);
     }
