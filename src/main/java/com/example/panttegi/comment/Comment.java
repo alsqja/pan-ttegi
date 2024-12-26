@@ -1,6 +1,6 @@
 package com.example.panttegi.comment;
 
-import com.example.panttegi.card.Card;
+import com.example.panttegi.card.entity.Card;
 import com.example.panttegi.common.BaseEntity;
 import com.example.panttegi.user.entity.User;
 import jakarta.persistence.Column;

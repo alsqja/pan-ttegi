@@ -1,4 +1,4 @@
-package com.example.panttegi.card;
+package com.example.panttegi.card.entity;
 
 import com.example.panttegi.comment.Comment;
 import com.example.panttegi.common.BaseEntity;
@@ -62,12 +62,13 @@ public class Card extends BaseEntity {
     @OneToMany(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<File> files = new ArrayList<>();
 
-    public Card(String title, String description, int position, LocalDateTime endAt, User user, User manager) {
+    public Card(String title, String description, int position, LocalDateTime endAt, User user, User manager, BoardList boardList) {
         this.title = title;
         this.description = description;
         this.position = position;
         this.endAt = endAt;
         this.user = user;
         this.manager = manager;
+        this.boardList = boardList;
     }
 }

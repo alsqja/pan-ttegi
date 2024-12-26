@@ -1,7 +1,7 @@
 package com.example.panttegi.user.entity;
 
 import com.example.panttegi.board.entity.Board;
-import com.example.panttegi.card.Card;
+import com.example.panttegi.card.entity.Card;
 import com.example.panttegi.comment.Comment;
 import com.example.panttegi.common.BaseEntity;
 import com.example.panttegi.enums.UserRole;
