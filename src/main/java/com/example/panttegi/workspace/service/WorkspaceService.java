@@ -27,7 +27,7 @@ public class WorkspaceService {
         User user = userRepository.findByIdOrThrow(userId);
 
         if (!user.getRole().name().equals("ADMIN")) {
-            throw new CustomException(ErrorCode.UNAUTHORIZED_PERMISSION);
+            throw new CustomException(ErrorCode.FORBIDDEN_PERMISSION);
         }
 
         Workspace workspace = workspaceRepository.save(

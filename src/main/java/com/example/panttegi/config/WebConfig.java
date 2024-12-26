@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -35,11 +36,12 @@ public class WebConfig {
         http.cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth ->
-                                auth.requestMatchers(WHITE_LIST).permitAll()
-                                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                                        .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.INCLUDE, DispatcherType.ERROR).permitAll()
-//                                .requestMatchers("/admin/**").hasRole("ADMIN")
-                                        .anyRequest().authenticated()
+                        auth.requestMatchers(WHITE_LIST).permitAll()
+                                .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+                                .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.INCLUDE, DispatcherType.ERROR).permitAll()
+                                .requestMatchers("/api/workspaces").hasRole("ADMIN")
+                                .requestMatchers(HttpMethod.GET, "/api/workspaces").permitAll()
+                                .anyRequest().authenticated()
                 )
                 .exceptionHandling(handler -> handler
                         .authenticationEntryPoint(authEntryPoint)

@@ -39,7 +39,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AuthorizationDeniedException.class)
     public ResponseEntity<ErrorResponse> handleAuthorizationDeniedException(AuthorizationDeniedException e) {
-        return ErrorResponse.toResponseEntity(ErrorCode.EXPIRED_TOKEN);
+        return ErrorResponse.toResponseEntity(ErrorCode.FORBIDDEN_PERMISSION);
     }
 
     @ExceptionHandler(JwtException.class)
