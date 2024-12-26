@@ -26,10 +26,10 @@ public class CardService {
     // 카드 생성
     public CardResponseDto postCard(
             String title, String description, int position, LocalDateTime endAt,
-            Long userId, Long managerId, Long listId, List<Long> fileIds
+            String email, Long managerId, Long listId, List<Long> fileIds
     ) {
 
-        User user = userRepository.findByIdOrElseThrow(userId);
+        User user = userRepository.findByEmailOrElseThrow(email);
         User manager = userRepository.findByIdOrElseThrow(managerId);
         BoardList boardList = new BoardList(); // 추후 추가
 
@@ -49,4 +49,23 @@ public class CardService {
 
         return new CardResponseDto(cardRepository.findByIdOrElseThrow(cardId));
     }
+
+    // 카드 수정
+    public void updateCard (
+            Long cardId, String title, String description, int position, LocalDateTime endAt,
+            String email, Long managerId, Long listId, List<Long> fileIds
+    ) {
+        cardRepository.findByIdOrElseThrow(cardId);
+
+    }
+
+    // 카드 삭제
+    public void deleteCard(Long cardId, String email) {
+        userRepository.findByEmailOrElseThrow(email);
+
+        Card card = cardRepository.findByIdOrElseThrow(cardId);
+
+        cardRepository.delete(card);
+    }
+
 }
