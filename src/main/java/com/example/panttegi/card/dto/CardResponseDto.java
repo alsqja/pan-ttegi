@@ -2,10 +2,13 @@ package com.example.panttegi.card.dto;
 
 import com.example.panttegi.card.entity.Card;
 import com.example.panttegi.common.BaseDtoDataType;
+import com.example.panttegi.file.repository.entity.File;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @RequiredArgsConstructor
@@ -21,8 +24,7 @@ public class CardResponseDto implements BaseDtoDataType {
     private final Long BoardListId;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
-
-//    private List<File> files = new ArrayList<>();
+    private List<File> files = new ArrayList<>();
 
     public CardResponseDto(Card card) {
         this.id = card.getId();
@@ -35,6 +37,7 @@ public class CardResponseDto implements BaseDtoDataType {
         this.BoardListId = card.getBoardList().getId();
         this.createdAt = card.getCreatedAt();
         this.updatedAt = card.getUpdatedAt();
+        this.files = card.getFiles();
     }
 
 

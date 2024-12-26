@@ -33,8 +33,9 @@ public class CardController {
                 postCardRequestDto.getEndAt(),
                 userId,
                 postCardRequestDto.getManagerId(),
-                postCardRequestDto.getBoardListId()
-        );
+                postCardRequestDto.getBoardListId(),
+                postCardRequestDto.getFileIds()
+                );
 
         return new ResponseEntity<>(new CommonResDto<>("카드 생성 완료", card), HttpStatus.CREATED);
     }
@@ -49,6 +50,7 @@ public class CardController {
 
         return new ResponseEntity<>(new CommonResDto<>("카드 단일 조회 완료", card), HttpStatus.OK);
     }
+
 
 
 }
