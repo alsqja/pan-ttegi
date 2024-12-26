@@ -1,19 +1,10 @@
 package com.example.panttegi.board.entity;
 
 import com.example.panttegi.common.BaseEntity;
-import com.example.panttegi.list.BoardList;
+import com.example.panttegi.list.entity.BoardList;
 import com.example.panttegi.user.entity.User;
 import com.example.panttegi.workspace.entity.Workspace;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

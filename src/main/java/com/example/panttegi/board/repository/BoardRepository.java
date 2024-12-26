@@ -2,6 +2,8 @@ package com.example.panttegi.board.repository;
 
 import com.example.panttegi.board.dto.BoardData;
 import com.example.panttegi.board.entity.Board;
+import com.example.panttegi.error.errorcode.ErrorCode;
+import com.example.panttegi.error.exception.CustomException;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,7 +19,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             where b.id = :boardId
             """)
     Board findByEmailAndWorkspaceAndId(String email, Long workspaceId, Long boardId);
-    
+
     @Query("""
                 SELECT new com.example.panttegi.board.dto.BoardData(
                     b.id, b.name, b.color, b.imageUrl,
@@ -34,4 +36,8 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
                 WHERE b.id = :boardId
             """)
     List<BoardData> getBoardDetails(@Param("boardId") Long boardId);
+
+    default Board findByIdOrElseThrow(Long id) {
+        return findById(id).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+    }
 }

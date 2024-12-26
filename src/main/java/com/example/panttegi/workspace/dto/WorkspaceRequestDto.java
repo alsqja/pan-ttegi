@@ -8,9 +8,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class WorkspaceRequestDto {
 
-    @NotBlank(message = "BAD_REQUEST")
+    @NotBlank(message = "BAD_INPUT")
     private final String name;
 
-    @NotBlank(message = "BAD_REQUEST")
+    @NotBlank(message = "BAD_INPUT")
     private final String description;
 }
