@@ -92,9 +92,8 @@ public class WorkspaceService {
             throw new CustomException(ErrorCode.BAD_REQUEST);
         }
 
-        Member newMember = new Member(role, invitee, workspace);
-        memberRepository.save(newMember);
+        Member newMember = memberRepository.save(new Member(role, invitee, workspace));
 
-        return new WorkspaceInviteResponseDto(role, invitee, workspace);
+        return new WorkspaceInviteResponseDto(newMember);
     }
 }
