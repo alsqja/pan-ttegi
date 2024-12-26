@@ -1,21 +1,17 @@
 package com.example.panttegi.card.service;
 
-import com.example.panttegi.card.Card;
+import com.example.panttegi.card.entity.Card;
 import com.example.panttegi.card.dto.PostCardResponseDto;
 import com.example.panttegi.card.repository.CardRepository;
-import com.example.panttegi.enums.MemberRole;
 import com.example.panttegi.error.errorcode.ErrorCode;
 import com.example.panttegi.error.exception.CustomException;
-import com.example.panttegi.file.File;
 import com.example.panttegi.list.BoardList;
-import com.example.panttegi.member.entity.Member;
 import com.example.panttegi.user.entity.User;
 import com.example.panttegi.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

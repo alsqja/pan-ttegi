@@ -1,6 +1,6 @@
 package com.example.panttegi.card.repository;
 
-import com.example.panttegi.card.Card;
+import com.example.panttegi.card.entity.Card;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

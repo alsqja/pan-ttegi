@@ -1,6 +1,5 @@
-package com.example.panttegi.card;
+package com.example.panttegi.card.entity;
 
-import com.example.panttegi.card.dto.PostCardResponseDto;
 import com.example.panttegi.comment.Comment;
 import com.example.panttegi.common.BaseEntity;
 import com.example.panttegi.file.File;

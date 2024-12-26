@@ -1,6 +1,6 @@
 package com.example.panttegi.card.dto;
 
-import com.example.panttegi.card.Card;
+import com.example.panttegi.card.entity.Card;
 import com.example.panttegi.common.BaseDtoDataType;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
