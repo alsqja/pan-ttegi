@@ -1,0 +1,31 @@
+package com.example.panttegi.comment.service;
+
+import com.example.panttegi.card.entity.Card;
+import com.example.panttegi.card.repository.CardRepository;
+import com.example.panttegi.comment.dto.CommentResponseDto;
+import com.example.panttegi.comment.entity.Comment;
+import com.example.panttegi.comment.repository.CommentRepository;
+import com.example.panttegi.user.entity.User;
+import com.example.panttegi.user.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class CommentService {
+    private final CommentRepository commentRepository;
+    private final UserRepository userRepository;
+    private final CardRepository cardRepository;
+
+    // 댓글 생성
+    public CommentResponseDto createComment(Long cardId, String email, String content) {
+
+        Card card = cardRepository.findByIdOrElseThrow(cardId);
+        User user = userRepository.findByEmailOrElseThrow(email);
+
+        Comment comment = new Comment(content, user, card);
+
+        return new CommentResponseDto(commentRepository.save(comment));
+    }
+
+}
