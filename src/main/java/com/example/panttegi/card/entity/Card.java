@@ -2,7 +2,7 @@ package com.example.panttegi.card.entity;
 
 import com.example.panttegi.comment.Comment;
 import com.example.panttegi.common.BaseEntity;
-import com.example.panttegi.file.File;
+import com.example.panttegi.file.repository.entity.File;
 import com.example.panttegi.list.BoardList;
 import com.example.panttegi.user.entity.User;
 import jakarta.persistence.CascadeType;
@@ -62,7 +62,7 @@ public class Card extends BaseEntity {
     @OneToMany(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<File> files = new ArrayList<>();
 
-    public Card(String title, String description, int position, LocalDateTime endAt, User user, User manager, BoardList boardList) {
+    public Card(String title, String description, int position, LocalDateTime endAt, User user, User manager, BoardList boardList, List<File> files) {
         this.title = title;
         this.description = description;
         this.position = position;
@@ -70,5 +70,6 @@ public class Card extends BaseEntity {
         this.user = user;
         this.manager = manager;
         this.boardList = boardList;
+        this.files = files;
     }
 }

@@ -1,10 +1,9 @@
 package com.example.panttegi.card.controller;
 
 import com.example.panttegi.card.dto.PostCardRequestDto;
-import com.example.panttegi.card.dto.PostCardResponseDto;
+import com.example.panttegi.card.dto.CardResponseDto;
 import com.example.panttegi.card.service.CardService;
 import com.example.panttegi.common.CommonResDto;
-import com.example.panttegi.user.entity.User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,7 +18,7 @@ public class CardController {
 
     // 카드 생성
     @PostMapping
-    public ResponseEntity<CommonResDto<PostCardResponseDto>> postCard(
+    public ResponseEntity<CommonResDto<CardResponseDto>> postCard(
             @Valid @RequestBody PostCardRequestDto postCardRequestDto,
             @RequestHeader("Authorization") String token
     ) {
@@ -27,18 +26,31 @@ public class CardController {
         // 나중에 토큰으로 받음
         Long userId = 1L;
 
-        PostCardResponseDto card = cardService.postCard(
+        CardResponseDto card = cardService.postCard(
                 postCardRequestDto.getTitle(),
                 postCardRequestDto.getDescription(),
                 postCardRequestDto.getPosition(),
                 postCardRequestDto.getEndAt(),
                 userId,
                 postCardRequestDto.getManagerId(),
-                postCardRequestDto.getBoardListId()
-        );
+                postCardRequestDto.getBoardListId(),
+                postCardRequestDto.getFileIds()
+                );
 
         return new ResponseEntity<>(new CommonResDto<>("카드 생성 완료", card), HttpStatus.CREATED);
     }
+
+    // 카드 단일 조회
+    @GetMapping("/{cardId}")
+    public ResponseEntity<CommonResDto<CardResponseDto>> getCard(
+            @PathVariable Long cardId
+    ) {
+
+        CardResponseDto card = cardService.getCard(cardId);
+
+        return new ResponseEntity<>(new CommonResDto<>("카드 단일 조회 완료", card), HttpStatus.OK);
+    }
+
 
 
 }
