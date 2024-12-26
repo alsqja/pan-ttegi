@@ -37,6 +37,18 @@ public class ListController {
             Authentication authentication
     ) {
         ListResponseDto response = listService.updateList(listId, listRequestDto, authentication.getName());
+
         return new ResponseEntity<>(new CommonResDto<>("리스트 수정 완료", response), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{listId}")
+    public ResponseEntity<Void> deleteList(
+            @PathVariable Long boardId,
+            @PathVariable Long listId,
+            Authentication authentication
+    ) {
+        listService.deleteList(listId, authentication.getName());
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

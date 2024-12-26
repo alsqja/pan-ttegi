@@ -34,7 +34,7 @@ public class ListService {
 
     @Transactional
     public ListResponseDto updateList(Long listId, ListRequestDto listRequestDto, String email) {
-        User user = userRepository.findByEmailOrElseThrow(email);
+//        User user = userRepository.findByEmailOrElseThrow(email);
 
         BoardList boardList = listRepository.findByIdOrElseThrow(listId);
 
@@ -47,6 +47,12 @@ public class ListService {
         boardList.updatePosition(newPosition);
 
         return new ListResponseDto(boardList);
+    }
+
+    @Transactional
+    public void deleteList(Long listId, String email) {
+        BoardList boardList = listRepository.findByIdOrElseThrow(listId);
+        listRepository.delete(boardList);
     }
 
     private Double calculateNewPosition(List<BoardList> lists, Double requestedPosition, Long currentListId) {
