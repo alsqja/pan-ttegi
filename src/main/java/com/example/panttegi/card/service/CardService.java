@@ -25,8 +25,8 @@ public class CardService {
             Long userId, Long managerId, Long listId
     ) {
 
-        User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
-        User manager = userRepository.findById(managerId).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+        User user = userRepository.findByIdOrThrow(userId);
+        User manager = userRepository.findByIdOrThrow(managerId);
         BoardList boardList = new BoardList(); // 추후 추가
 
         Card card = new Card(title, description, position, endAt, user, manager, boardList);
