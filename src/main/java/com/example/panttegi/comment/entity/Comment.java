@@ -1,4 +1,4 @@
-package com.example.panttegi.comment;
+package com.example.panttegi.comment.entity;
 
 import com.example.panttegi.card.entity.Card;
 import com.example.panttegi.common.BaseEntity;
