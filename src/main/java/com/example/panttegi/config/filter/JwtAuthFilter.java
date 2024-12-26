@@ -40,13 +40,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
 
-        try {
-            if (!isWhiteListed(request.getRequestURI())) {
-                authenticate(request, response);
-            }
-        } catch (Exception e) {
-            request.setAttribute("exception", e);
-        }
+        authenticate(request, response);
 
         filterChain.doFilter(request, response);
     }
@@ -61,7 +55,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String token = getTokenFromRequest(request);
         if (!jwtProvider.validToken(token)) {
             //  refreshToken 설정?
-//            throw new JwtException("Invalid or expired JWT token");
             return;
         }
 
