@@ -44,4 +44,12 @@ public class BoardList extends BaseEntity {
         this.user = user;
         this.board = board;
     }
+
+    public void updateTitle(String title) {
+        this.title = title;
+    }
+
+    public void updatePosition(Double position) {
+        this.position = position;
+    }
 }

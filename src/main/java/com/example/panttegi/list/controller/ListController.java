@@ -28,4 +28,15 @@ public class ListController {
 
         return new ResponseEntity<>(new CommonResDto<>("리스트 생성 완료", response), HttpStatus.CREATED);
     }
+
+    @PatchMapping("/{listId}")
+    public ResponseEntity<CommonResDto<ListResponseDto>> updateList(
+            @PathVariable Long boardId,
+            @PathVariable Long listId,
+            @Valid @RequestBody ListRequestDto listRequestDto,
+            Authentication authentication
+    ) {
+        ListResponseDto response = listService.updateList(listId, listRequestDto, authentication.getName());
+        return new ResponseEntity<>(new CommonResDto<>("리스트 수정 완료", response), HttpStatus.OK);
+    }
 }
