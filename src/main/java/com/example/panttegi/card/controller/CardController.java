@@ -31,7 +31,7 @@ public class CardController {
                 postCardRequestDto.getEndAt(),
                 authentication.getName(),
                 postCardRequestDto.getManagerId(),
-                postCardRequestDto.getBoardListId(),
+                postCardRequestDto.getListId(),
                 postCardRequestDto.getFileIds()
                 );
 
@@ -65,7 +65,7 @@ public class CardController {
                 postCardRequestDto.getEndAt(),
                 authentication.getName(),
                 postCardRequestDto.getManagerId(),
-                postCardRequestDto.getBoardListId(),
+                postCardRequestDto.getListId(),
                 postCardRequestDto.getFileIds()
         );
 

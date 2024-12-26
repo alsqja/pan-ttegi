@@ -23,13 +23,10 @@ public class PostCardRequestDto {
 
     private final LocalDateTime endAt;
 
-    @NotNull(message = "BAD_INPUT")
-    private final Long user;
-
     private final Long managerId;
 
     @NotNull(message = "BAD_INPUT")
-    private final Long boardListId;
+    private final Long listId;
 
     private final List<Long> fileIds;
 
