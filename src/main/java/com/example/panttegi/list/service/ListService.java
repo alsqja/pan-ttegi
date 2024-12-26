@@ -2,7 +2,6 @@ package com.example.panttegi.list.service;
 
 import com.example.panttegi.board.entity.Board;
 import com.example.panttegi.board.repository.BoardRepository;
-import com.example.panttegi.list.dto.ListRequestDto;
 import com.example.panttegi.list.dto.ListResponseDto;
 import com.example.panttegi.list.entity.BoardList;
 import com.example.panttegi.list.repository.ListRepository;
@@ -24,26 +23,26 @@ public class ListService {
     private final UserRepository userRepository;
 
     @Transactional
-    public ListResponseDto createList(Long boardId, ListRequestDto listRequestDto, String email) {
+    public ListResponseDto createList(Long boardId, String title, Double position, String email) {
         User user = userRepository.findByEmailOrElseThrow(email);
         Board board = boardRepository.findByIdOrElseThrow(boardId);
 
-        BoardList boardList = new BoardList(listRequestDto.getTitle(), listRequestDto.getPosition(), user, board);
+        BoardList boardList = new BoardList(title, position, user, board);
         return new ListResponseDto(listRepository.save(boardList));
     }
 
     @Transactional
-    public ListResponseDto updateList(Long listId, ListRequestDto listRequestDto, String email) {
-//        User user = userRepository.findByEmailOrElseThrow(email);
+    public ListResponseDto updateList(Long listId, String title, Double position, String email) {
+        User user = userRepository.findByEmailOrElseThrow(email);
 
         BoardList boardList = listRepository.findByIdOrElseThrow(listId);
 
-        boardList.updateTitle(listRequestDto.getTitle());
+        boardList.updateTitle(title);
 
         List<BoardList> lists = listRepository.findByBoardId(boardList.getBoard().getId());
         lists.sort(Comparator.comparing(BoardList::getPosition));
 
-        Double newPosition = calculateNewPosition(lists, listRequestDto.getPosition(), boardList.getId());
+        Double newPosition = calculateNewPosition(lists, position, boardList.getId());
         boardList.updatePosition(newPosition);
 
         return new ListResponseDto(boardList);

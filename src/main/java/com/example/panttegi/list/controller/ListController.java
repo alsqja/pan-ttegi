@@ -24,7 +24,12 @@ public class ListController {
             @Valid @RequestBody ListRequestDto listRequestDto,
             Authentication authentication
     ) {
-        ListResponseDto response = listService.createList(boardId, listRequestDto, authentication.getName());
+        ListResponseDto response = listService.createList(
+                boardId,
+                listRequestDto.getTitle(),
+                listRequestDto.getPosition(),
+                authentication.getName()
+        );
 
         return new ResponseEntity<>(new CommonResDto<>("리스트 생성 완료", response), HttpStatus.CREATED);
     }
@@ -36,7 +41,11 @@ public class ListController {
             @Valid @RequestBody ListRequestDto listRequestDto,
             Authentication authentication
     ) {
-        ListResponseDto response = listService.updateList(listId, listRequestDto, authentication.getName());
+        ListResponseDto response = listService.updateList(
+                listId,
+                listRequestDto.getTitle(),
+                listRequestDto.getPosition(),
+                authentication.getName());
 
         return new ResponseEntity<>(new CommonResDto<>("리스트 수정 완료", response), HttpStatus.OK);
     }
