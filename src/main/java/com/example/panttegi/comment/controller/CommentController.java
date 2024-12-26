@@ -1,0 +1,36 @@
+package com.example.panttegi.comment.controller;
+
+import com.example.panttegi.card.dto.CardResponseDto;
+import com.example.panttegi.comment.dto.CommentRequestDto;
+import com.example.panttegi.comment.dto.CommentResponseDto;
+import com.example.panttegi.comment.service.CommentService;
+import com.example.panttegi.common.CommonResDto;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/cards/{cardId}/comments")
+@RequiredArgsConstructor
+public class CommentController {
+    private final CommentService commentService;
+
+    // 댓글 생성
+    @PostMapping
+    public ResponseEntity<CommonResDto<CommentResponseDto>> createComment(
+            @PathVariable Long cardId,
+            @RequestBody CommentRequestDto commentRequestDto,
+            Authentication authentication
+            ) {
+
+        CommentResponseDto comment = commentService.createComment(
+                cardId,
+                commentRequestDto.getContent(),
+                authentication.getName()
+        );
+
+        return new ResponseEntity<>(new CommonResDto<>("카드 생성 완료", comment), HttpStatus.CREATED);
+    }
+}
