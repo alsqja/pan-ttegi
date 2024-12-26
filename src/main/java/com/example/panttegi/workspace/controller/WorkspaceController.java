@@ -69,4 +69,14 @@ public class WorkspaceController {
 
         return new ResponseEntity<>(new CommonResDto<>("워크스페이스 수정 완료", workspace), HttpStatus.OK);
     }
+
+    @DeleteMapping("/{workspaceId}")
+    public ResponseEntity<Void> deleteWorkspace(
+            @PathVariable Long workspaceId,
+            Authentication authentication
+    ) {
+        workspaceService.deleteWorkspace(workspaceId, authentication.getName());
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }
