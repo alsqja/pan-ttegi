@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @RequiredArgsConstructor
-public class PostCardResponseDto implements BaseDtoDataType {
+public class CardResponseDto implements BaseDtoDataType {
 
     private final Long id;
     private final String title;
@@ -24,7 +24,7 @@ public class PostCardResponseDto implements BaseDtoDataType {
 
 //    private List<File> files = new ArrayList<>();
 
-    public PostCardResponseDto(Card card) {
+    public CardResponseDto(Card card) {
         this.id = card.getId();
         this.title = card.getTitle();
         this.description = card.getDescription();

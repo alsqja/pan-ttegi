@@ -1,10 +1,8 @@
 package com.example.panttegi.card.service;
 
 import com.example.panttegi.card.entity.Card;
-import com.example.panttegi.card.dto.PostCardResponseDto;
+import com.example.panttegi.card.dto.CardResponseDto;
 import com.example.panttegi.card.repository.CardRepository;
-import com.example.panttegi.error.errorcode.ErrorCode;
-import com.example.panttegi.error.exception.CustomException;
 import com.example.panttegi.list.BoardList;
 import com.example.panttegi.user.entity.User;
 import com.example.panttegi.user.repository.UserRepository;
@@ -20,7 +18,7 @@ public class CardService {
     private final UserRepository userRepository;
 
     // 카드 생성
-    public PostCardResponseDto postCard(
+    public CardResponseDto postCard(
             String title, String description, int position, LocalDateTime endAt,
             Long userId, Long managerId, Long listId
     ) {
@@ -31,7 +29,13 @@ public class CardService {
 
         Card card = new Card(title, description, position, endAt, user, manager, boardList);
 
-        return new PostCardResponseDto(cardRepository.save(card));
+        return new CardResponseDto(cardRepository.save(card));
 
+    }
+
+    // 카드 단일 조회
+    public CardResponseDto getCard(Long cardId) {
+
+        return new CardResponseDto(cardRepository.findByIdOrElseThrow(cardId));
     }
 }
