@@ -33,4 +33,18 @@ public class CommentController {
 
         return new ResponseEntity<>(new CommonResDto<>("카드 생성 완료", comment), HttpStatus.CREATED);
     }
+
+    // 댓글 삭제
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<Void> deleteComment(
+            @PathVariable Long commentId,
+            Authentication authentication
+    ) {
+
+        commentService.deleteComment(commentId, authentication.getName());
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+
 }

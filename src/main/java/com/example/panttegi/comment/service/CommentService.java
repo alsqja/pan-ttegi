@@ -28,4 +28,13 @@ public class CommentService {
         return new CommentResponseDto(commentRepository.save(comment));
     }
 
+    // 댓글 삭제
+    public void deleteComment(Long commentId, String email) {
+        userRepository.findByEmailOrElseThrow(email);
+
+        Comment comment = commentRepository.findByIdOrElseThrow(commentId);
+
+        commentRepository.delete(comment);
+    }
+
 }
