@@ -43,7 +43,7 @@ public class Workspace extends BaseEntity {
         this.user = user;
     }
 
-    public void workspaceUpdate(String name, String description) {
+    public void updateWorkspace(String name, String description) {
         this.name = name;
         this.description = description;
     }

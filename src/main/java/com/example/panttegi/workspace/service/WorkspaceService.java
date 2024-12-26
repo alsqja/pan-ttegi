@@ -1,8 +1,6 @@
 package com.example.panttegi.workspace.service;
 
 import com.example.panttegi.enums.MemberRole;
-import com.example.panttegi.error.errorcode.ErrorCode;
-import com.example.panttegi.error.exception.CustomException;
 import com.example.panttegi.member.entity.Member;
 import com.example.panttegi.member.repository.MemberRepository;
 import com.example.panttegi.user.entity.User;
@@ -29,10 +27,6 @@ public class WorkspaceService {
     public WorkspaceResponseDto createWorkspace(String name, String description, String email) {
         User user = userRepository.findByEmailOrElseThrow(email);
 
-        if (!user.getRole().name().equals("ADMIN")) {
-            throw new CustomException(ErrorCode.UNAUTHORIZED_PERMISSION);
-        }
-
         Workspace workspace = workspaceRepository.save(
                 new Workspace(name, description, user)
         );
@@ -43,7 +37,6 @@ public class WorkspaceService {
         return new WorkspaceResponseDto(workspace);
     }
 
-    @Transactional
     public List<WorkspaceResponseDto> getAllWorkspaces(String email) {
         User user = userRepository.findByEmailOrElseThrow(email);
 
@@ -54,7 +47,6 @@ public class WorkspaceService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
     public WorkspaceResponseDto getWorkspace(Long workspaceId, String email) {
         User user = userRepository.findByEmailOrElseThrow(email);
 
@@ -71,12 +63,7 @@ public class WorkspaceService {
 
         Workspace workspace = workspaceRepository.findByIdOrElseThrow(workspaceId);
 
-        Member member = memberRepository.findByUserAndWorkspaceOrElseThrow(user, workspace);
-        if (!member.getRole().equals(MemberRole.WORKSPACE)) {
-            throw new CustomException(ErrorCode.UNAUTHORIZED_PERMISSION);
-        }
-
-        workspace.workspaceUpdate(name, description);
+        workspace.updateWorkspace(name, description);
 
         return new WorkspaceResponseDto(workspace);
     }
