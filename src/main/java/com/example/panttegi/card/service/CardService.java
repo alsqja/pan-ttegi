@@ -25,8 +25,8 @@ public class CardService {
             Long userId, Long managerId, Long listId
     ) {
 
-        User user = userRepository.findByIdOrThrow(userId);
-        User manager = userRepository.findByIdOrThrow(managerId);
+        User user = userRepository.findByIdOrElseThrow(userId);
+        User manager = userRepository.findByIdOrElseThrow(managerId);
         BoardList boardList = new BoardList(); // 추후 추가
 
         Card card = new Card(title, description, position, endAt, user, manager, boardList);
