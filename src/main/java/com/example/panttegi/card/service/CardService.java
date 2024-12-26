@@ -1,14 +1,23 @@
 package com.example.panttegi.card.service;
 
+import com.example.panttegi.board.entity.Board;
+import com.example.panttegi.board.repository.BoardRepository;
 import com.example.panttegi.card.entity.Card;
 import com.example.panttegi.card.dto.CardResponseDto;
 import com.example.panttegi.card.repository.CardRepository;
+import com.example.panttegi.error.errorcode.ErrorCode;
+import com.example.panttegi.error.exception.CustomException;
 import com.example.panttegi.file.repository.FileRepository;
 import com.example.panttegi.file.repository.entity.File;
 import com.example.panttegi.list.BoardList;
 import com.example.panttegi.user.entity.User;
 import com.example.panttegi.user.repository.UserRepository;
+import com.example.panttegi.workspace.entity.Workspace;
+import com.example.panttegi.workspace.repository.WorkspaceRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -22,6 +31,7 @@ public class CardService {
     private final CardRepository cardRepository;
     private final UserRepository userRepository;
     private final FileRepository fileRepository;
+
 
     // 카드 생성
     public CardResponseDto postCard(
@@ -50,13 +60,29 @@ public class CardService {
         return new CardResponseDto(cardRepository.findByIdOrElseThrow(cardId));
     }
 
+    // 카드 검색
+    public List<CardResponseDto> searchCard(Long workspaceId, Long boardId, String title,
+                                 String description, String managerName, int page
+    ) {
+
+        Pageable pageable = PageRequest.of(page, 10);
+
+        Page<Card> cards = cardRepository.searchCards(workspaceId, boardId, title, description, managerName, pageable);
+
+        List<CardResponseDto> dtos = cards.getContent().stream()
+                .map(CardResponseDto::new)
+                .toList();
+
+        return dtos;
+    }
+
     // 카드 수정
     public void updateCard (
             Long cardId, String title, String description, int position, LocalDateTime endAt,
             String email, Long managerId, Long listId, List<Long> fileIds
     ) {
-        cardRepository.findByIdOrElseThrow(cardId);
 
+        cardRepository.findByIdOrElseThrow(cardId);
     }
 
     // 카드 삭제

@@ -2,14 +2,19 @@ package com.example.panttegi.card.controller;
 
 import com.example.panttegi.card.dto.PostCardRequestDto;
 import com.example.panttegi.card.dto.CardResponseDto;
+import com.example.panttegi.card.entity.Card;
 import com.example.panttegi.card.service.CardService;
+import com.example.panttegi.common.CommonListResDto;
 import com.example.panttegi.common.CommonResDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/cards")
@@ -47,6 +52,29 @@ public class CardController {
         CardResponseDto card = cardService.getCard(cardId);
 
         return new ResponseEntity<>(new CommonResDto<>("카드 단일 조회 완료", card), HttpStatus.OK);
+    }
+
+    // 카드 검색
+    @GetMapping
+    public ResponseEntity<CommonListResDto<CardResponseDto>> searchCard(
+            @RequestParam(required = false) Long workspaceId,
+            @RequestParam(required = false) Long boardId,
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String description,
+            @RequestParam(required = false) String managerName,
+            @RequestParam(defaultValue = "0") int page
+    ) {
+
+        List<CardResponseDto> cardResponseDtos = cardService.searchCard(
+                workspaceId,
+                boardId,
+                title,
+                description,
+                managerName,
+                page
+        );
+
+        return new ResponseEntity<>(new CommonListResDto<>("카드 단일 조회 완료", cardResponseDtos), HttpStatus.OK);
     }
 
     // 카드 수정 (아직 미완)
