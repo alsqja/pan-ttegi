@@ -1,15 +1,14 @@
 package com.example.panttegi.user.entity;
 
-import com.example.panttegi.board.Board;
+import com.example.panttegi.board.entity.Board;
 import com.example.panttegi.card.Card;
 import com.example.panttegi.comment.Comment;
 import com.example.panttegi.common.BaseEntity;
 import com.example.panttegi.enums.UserRole;
 import com.example.panttegi.file.File;
 import com.example.panttegi.list.BoardList;
-import com.example.panttegi.member.Member;
-import com.example.panttegi.user.dto.SignupRequestDto;
-import com.example.panttegi.workspace.Workspace;
+import com.example.panttegi.member.entity.Member;
+import com.example.panttegi.workspace.entity.Workspace;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -93,8 +92,20 @@ public class User extends BaseEntity {
         this.role = role;
     }
 
-    public static User toEntity(SignupRequestDto dto) {
-        return new User(dto.getEmail(), dto.getPassword(), dto.getProfileUrl(), dto.getName(), dto.getRole());
+    public void updatePassword(String password) {
+        this.password = password;
+    }
+
+    public void updateRole(UserRole role) {
+        this.role = role;
+    }
+
+    public void updateProfileUrl(String profileUrl) {
+        this.profileUrl = profileUrl;
+    }
+
+    public void updateName(String name) {
+        this.name = name;
     }
 
     @TestOnly

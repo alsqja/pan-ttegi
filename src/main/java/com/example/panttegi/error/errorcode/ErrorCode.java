@@ -20,7 +20,7 @@ public enum ErrorCode {
     UNAUTHORIZED_PASSWORD(HttpStatus.UNAUTHORIZED, "잘못된 비밀번호 입니다."),
     UNAUTHORIZED_PERMISSION(HttpStatus.UNAUTHORIZED, "권한이 없습니다."),
     UNCHECKED_PASSWORD(HttpStatus.UNAUTHORIZED, "비밀번호 확인이 필요합니다."),
-    UNAUTHORIZED_USER(HttpStatus.UNAUTHORIZED, "본인의 댓글이 아닙니다."),
+    UNAUTHORIZED_USER(HttpStatus.UNAUTHORIZED, "본인이 아닙니다."),
 
     // 404 NOT_FOUND
     NOT_FOUND(HttpStatus.NOT_FOUND, "없는 데이터 입니다.");
