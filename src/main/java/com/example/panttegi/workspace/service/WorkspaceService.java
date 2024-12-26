@@ -67,4 +67,13 @@ public class WorkspaceService {
 
         return new WorkspaceResponseDto(workspace);
     }
+
+    @Transactional
+    public void deleteWorkspace(Long workspaceId, String email) {
+        User user = userRepository.findByEmailOrElseThrow(email);
+
+        Workspace workspace = workspaceRepository.findByIdOrElseThrow(workspaceId);
+
+        workspaceRepository.delete(workspace);
+    }
 }
