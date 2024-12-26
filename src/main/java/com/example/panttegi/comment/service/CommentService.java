@@ -9,6 +9,7 @@ import com.example.panttegi.user.entity.User;
 import com.example.panttegi.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +27,14 @@ public class CommentService {
         Comment comment = new Comment(content, user, card);
 
         return new CommentResponseDto(commentRepository.save(comment));
+    }
+
+    // 댓글 수정
+    @Transactional
+    public CommentResponseDto updateComment(Long commentId, String content, String email) {
+        Comment comment = commentRepository.findByIdOrElseThrow(commentId);
+
+        return new CommentResponseDto(commentRepository.save(comment.updateContent(content)));
     }
 
     // 댓글 삭제

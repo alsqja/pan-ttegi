@@ -5,6 +5,7 @@ import com.example.panttegi.comment.dto.CommentRequestDto;
 import com.example.panttegi.comment.dto.CommentResponseDto;
 import com.example.panttegi.comment.service.CommentService;
 import com.example.panttegi.common.CommonResDto;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +32,20 @@ public class CommentController {
                 authentication.getName()
         );
 
-        return new ResponseEntity<>(new CommonResDto<>("카드 생성 완료", comment), HttpStatus.CREATED);
+        return new ResponseEntity<>(new CommonResDto<>("댓글 생성 완료", comment), HttpStatus.CREATED);
+    }
+
+    // 댓글 수정
+    @PatchMapping("/{commentId}")
+    public ResponseEntity<CommonResDto<CommentResponseDto>> updateComment(
+            @PathVariable Long commentId,
+            @Valid @RequestBody CommentRequestDto commentRequestDto,
+            Authentication authentication
+    ) {
+
+        CommentResponseDto comment = commentService.updateComment(commentId, commentRequestDto.getContent(), authentication.getName());
+
+        return new ResponseEntity<>(new CommonResDto<>("댓글 수정 완료", comment), HttpStatus.CREATED);
     }
 
     // 댓글 삭제
