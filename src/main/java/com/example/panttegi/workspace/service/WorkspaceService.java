@@ -1,8 +1,6 @@
 package com.example.panttegi.workspace.service;
 
 import com.example.panttegi.enums.MemberRole;
-import com.example.panttegi.error.errorcode.ErrorCode;
-import com.example.panttegi.error.exception.CustomException;
 import com.example.panttegi.member.entity.Member;
 import com.example.panttegi.member.repository.MemberRepository;
 import com.example.panttegi.user.entity.User;
@@ -14,6 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class WorkspaceService {
@@ -23,12 +24,8 @@ public class WorkspaceService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public WorkspaceResponseDto createWorkspace(String name, String description, Long userId) {
-        User user = userRepository.findByIdOrThrow(userId);
-
-        if (!user.getRole().name().equals("ADMIN")) {
-            throw new CustomException(ErrorCode.FORBIDDEN_PERMISSION);
-        }
+    public WorkspaceResponseDto createWorkspace(String name, String description, String email) {
+        User user = userRepository.findByEmailOrElseThrow(email);
 
         Workspace workspace = workspaceRepository.save(
                 new Workspace(name, description, user)
@@ -36,6 +33,37 @@ public class WorkspaceService {
 
         Member member = new Member(MemberRole.WORKSPACE, user, workspace);
         memberRepository.save(member);
+
+        return new WorkspaceResponseDto(workspace);
+    }
+
+    public List<WorkspaceResponseDto> getAllWorkspaces(String email) {
+        User user = userRepository.findByEmailOrElseThrow(email);
+
+        List<Member> members = memberRepository.findByAllUserOrElseThrow(user);
+
+        return members.stream()
+                .map(member -> new WorkspaceResponseDto(member.getWorkspace()))
+                .collect(Collectors.toList());
+    }
+
+    public WorkspaceResponseDto getWorkspace(Long workspaceId, String email) {
+        User user = userRepository.findByEmailOrElseThrow(email);
+
+        Workspace workspace = workspaceRepository.findByIdOrElseThrow(workspaceId);
+
+        Member member = memberRepository.findByUserAndWorkspaceOrElseThrow(user, workspace);
+
+        return new WorkspaceResponseDto(workspace);
+    }
+
+    @Transactional
+    public WorkspaceResponseDto updateWorkspace(Long workspaceId, String name, String description, String email) {
+        User user = userRepository.findByEmailOrElseThrow(email);
+
+        Workspace workspace = workspaceRepository.findByIdOrElseThrow(workspaceId);
+
+        workspace.updateWorkspace(name, description);
 
         return new WorkspaceResponseDto(workspace);
     }
