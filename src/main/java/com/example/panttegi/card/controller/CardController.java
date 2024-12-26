@@ -41,7 +41,7 @@ public class CardController {
 
     // 카드 단일 조회
     @GetMapping("/{cardId}")
-    public ResponseEntity<CommonResDto<CardResponseDto>> asdf(
+    public ResponseEntity<CommonResDto<CardResponseDto>> getCard(
             @PathVariable Long cardId
     ) {
 
