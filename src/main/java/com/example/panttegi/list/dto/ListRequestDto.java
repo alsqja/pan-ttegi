@@ -9,6 +9,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ListRequestDto {
 
+    @NotNull(message = "BAD_INPUT")
+    private final Long boardId;
+
     @NotBlank(message = "BAD_INPUT")
     private final String title;
 
