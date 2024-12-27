@@ -13,21 +13,20 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/workspaces/{workspaceId}/comments")
 @RequiredArgsConstructor
 public class CommentController {
     private final CommentService commentService;
 
     // 댓글 생성
-    @PostMapping("/cards/{cardId}/comments")
+    @PostMapping
     public ResponseEntity<CommonResDto<CommentResponseDto>> createComment(
-            @PathVariable Long cardId,
-            @RequestBody CommentRequestDto commentRequestDto,
+            @Valid @RequestBody CommentRequestDto commentRequestDto,
             Authentication authentication
             ) {
 
         CommentResponseDto comment = commentService.createComment(
-                cardId,
+                commentRequestDto.getCardId(),
                 authentication.getName(),
                 commentRequestDto.getContent()
         );
@@ -36,7 +35,7 @@ public class CommentController {
     }
 
     // 댓글 수정
-    @PatchMapping("/workspaces/{workspaceId}/comments/{commentId}")
+    @PatchMapping("/{commentId}")
     public ResponseEntity<CommonResDto<CommentResponseDto>> updateComment(
             @PathVariable Long commentId,
             @Valid @RequestBody CommentRequestDto commentRequestDto,
@@ -49,7 +48,7 @@ public class CommentController {
     }
 
     // 댓글 삭제
-    @DeleteMapping("/workspaces/{workspaceId}/comments/{commentId}")
+    @DeleteMapping("/{commentId}")
     public ResponseEntity<Void> deleteComment(
             @PathVariable Long commentId
     ) {

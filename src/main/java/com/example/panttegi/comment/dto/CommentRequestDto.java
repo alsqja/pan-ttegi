@@ -8,14 +8,13 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
+@RequiredArgsConstructor
 public class CommentRequestDto {
 
-    @NotNull
-    private final String content;
+    @NotNull(message = "BAD_INPUT")
+    private final Long cardId;
 
-    @JsonCreator
-    public CommentRequestDto(String content) {
-        this.content = content;
-    }
+    @NotBlank(message = "BAD_INPUT")
+    private final String content;
 
 }
