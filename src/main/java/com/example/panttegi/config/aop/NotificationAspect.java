@@ -82,23 +82,7 @@ public class NotificationAspect {
         Result result = getResult();
         if (result == null) return;
 
-        if (response instanceof ResponseEntity<?> responseEntity) {
-            Object body = responseEntity.getBody();
-
-            String bodyMessage = result.method;
-
-            if (body instanceof CommonResDto<? extends BaseDtoDataType> commonResDto) {
-                bodyMessage = commonResDto.getMessage();
-            } else {
-                if (result.method.equals("DELETE")) {
-                    bodyMessage = "보드 삭제";
-                }
-            }
-
-            String message = result.workspace.getName() + " 에서 " + bodyMessage + " 되었습니다.";
-
-            callSlackApi(message, result.workspace);
-        }
+        extracted(response, result, "보드 삭제");
     }
 
     @AfterReturning(
@@ -110,6 +94,34 @@ public class NotificationAspect {
         Result result = getResult();
         if (result == null) return;
 
+        extracted(response, result, "카드 삭제");
+    }
+
+    @AfterReturning(
+            pointcut = "execution(* com.example.panttegi.comment.controller.CommentController.*(..))",
+            returning = "response"
+    )
+    public void notifyAfterCommentReturning(JoinPoint joinPoint, Object response) {
+
+        Result result = getResult();
+        if (result == null) return;
+
+        extracted(response, result, "댓글 삭제");
+    }
+
+    @AfterReturning(
+            pointcut = "execution(* com.example.panttegi.list.controller.ListController.*(..))",
+            returning = "response"
+    )
+    public void notifyAfterListReturning(JoinPoint joinPoint, Object response) {
+
+        Result result = getResult();
+        if (result == null) return;
+
+        extracted(response, result, "리스트 삭제");
+    }
+
+    private void extracted(Object response, Result result, String deleteMessage) {
         if (response instanceof ResponseEntity<?> responseEntity) {
             Object body = responseEntity.getBody();
 
@@ -119,7 +131,7 @@ public class NotificationAspect {
                 bodyMessage = commonResDto.getMessage();
             } else {
                 if (result.method().equals("DELETE")) {
-                    bodyMessage = "카드 삭제";
+                    bodyMessage = deleteMessage;
                 }
             }
 
@@ -128,16 +140,6 @@ public class NotificationAspect {
             callSlackApi(message, result.workspace());
         }
     }
-
-//    @AfterReturning(
-//            pointcut = "execution(* com.example.panttegi.comment.controller.CommentController.*(..))",
-//            returning = "response"
-//    )
-
-//    @AfterReturning(
-//            pointcut = "execution(* com.example.panttegi.list.controller.ListController.*(..))",
-//            returning = "response"
-//    )
 
     private @Nullable Result getResult() {
         String method = request.getMethod();
