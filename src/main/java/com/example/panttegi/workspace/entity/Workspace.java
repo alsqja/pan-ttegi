@@ -4,7 +4,16 @@ import com.example.panttegi.board.entity.Board;
 import com.example.panttegi.common.BaseEntity;
 import com.example.panttegi.member.entity.Member;
 import com.example.panttegi.user.entity.User;
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -27,6 +36,12 @@ public class Workspace extends BaseEntity {
     @Column(name = "description", nullable = false)
     private String description;
 
+    @Column(name = "notify_channel")
+    private String notifyChannel;
+
+    @Column(name = "notify_token")
+    private String notifyToken;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -43,8 +58,19 @@ public class Workspace extends BaseEntity {
         this.user = user;
     }
 
+    public Workspace(String name, String description, String notifyChannel, String notifyToken) {
+        this.name = name;
+        this.description = description;
+        this.notifyChannel = notifyChannel;
+        this.notifyToken = notifyToken;
+    }
+
     public void updateWorkspace(String name, String description) {
         this.name = name;
         this.description = description;
+    }
+
+    public void updateUser(User user) {
+        this.user = user;
     }
 }

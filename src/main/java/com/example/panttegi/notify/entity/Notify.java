@@ -1,4 +1,4 @@
-package com.example.panttegi.alert;
+package com.example.panttegi.notify.entity;
 
 import com.example.panttegi.workspace.entity.Workspace;
 import jakarta.persistence.Column;
@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @Table(name = "alert")
 @Getter
 @NoArgsConstructor
-public class Alert {
+public class Notify {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,7 +42,7 @@ public class Alert {
         }
     }
 
-    public Alert(String message, Workspace workspace) {
+    public Notify(String message, Workspace workspace) {
         this.message = message;
         this.workspace = workspace;
     }

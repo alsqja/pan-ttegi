@@ -6,13 +6,21 @@ import com.example.panttegi.workspace.dto.WorkspaceInviteRequestDto;
 import com.example.panttegi.workspace.dto.WorkspaceInviteResponseDto;
 import com.example.panttegi.workspace.dto.WorkspaceRequestDto;
 import com.example.panttegi.workspace.dto.WorkspaceResponseDto;
+import com.example.panttegi.workspace.entity.Workspace;
 import com.example.panttegi.workspace.service.WorkspaceService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -28,13 +36,15 @@ public class WorkspaceController {
             @Valid @RequestBody WorkspaceRequestDto workspaceRequestDto,
             Authentication authentication
     ) {
-        WorkspaceResponseDto workspace = workspaceService.createWorkspace(
-                workspaceRequestDto.getName(),
-                workspaceRequestDto.getDescription(),
+
+        Workspace workspace = workspaceRequestDto.toEntity();
+
+        WorkspaceResponseDto result = workspaceService.createWorkspace(
+                workspace,
                 authentication.getName()
         );
 
-        return new ResponseEntity<>(new CommonResDto<>("워크스페이스 생성 완료", workspace), HttpStatus.CREATED);
+        return new ResponseEntity<>(new CommonResDto<>("워크스페이스 생성 완료", result), HttpStatus.CREATED);
     }
 
     @GetMapping
