@@ -1,11 +1,14 @@
 package com.example.panttegi.card.service;
 
+import com.example.panttegi.board.entity.Board;
+import com.example.panttegi.board.repository.BoardRepository;
 import com.example.panttegi.card.dto.CardResponseDto;
 import com.example.panttegi.card.entity.Card;
 import com.example.panttegi.card.repository.CardRepository;
 import com.example.panttegi.file.repository.FileRepository;
 import com.example.panttegi.file.repository.entity.File;
 import com.example.panttegi.list.entity.BoardList;
+import com.example.panttegi.list.repository.ListRepository;
 import com.example.panttegi.user.entity.User;
 import com.example.panttegi.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +27,7 @@ public class CardService {
     private final CardRepository cardRepository;
     private final UserRepository userRepository;
     private final FileRepository fileRepository;
+    private final ListRepository listRepository;
 
     // 카드 생성
     public CardResponseDto postCard(
@@ -33,8 +37,8 @@ public class CardService {
 
         User user = userRepository.findByEmailOrElseThrow(email);
         User manager = userRepository.findByIdOrElseThrow(managerId);
-        BoardList boardList = new BoardList(); // 추후 추가
-
+        BoardList boardList = listRepository.findByIdOrElseThrow(listId);
+        
         List<File> files = fileIds.stream()
                 .map(fileRepository::findByIdOrElseThrow)
                 .toList();
@@ -43,7 +47,6 @@ public class CardService {
                 user, manager, boardList, files);
 
         return new CardResponseDto(cardRepository.save(card));
-
     }
 
     // 카드 단일 조회
@@ -63,7 +66,7 @@ public class CardService {
                 .map(CardResponseDto::new);
     }
 
-    // 카드 수정 (리스트 머지하면 수정, 포지션도)
+    // 카드 수정 (포지션 수정)
     @Transactional
     public CardResponseDto updateCard (
             Long cardId, String title, String description, int position, LocalDateTime endAt,
@@ -73,7 +76,7 @@ public class CardService {
         Card card = cardRepository.findByIdOrElseThrow(cardId);
         User user = userRepository.findByEmailOrElseThrow(email);
         User manager = userRepository.findByIdOrElseThrow(managerId);
-        BoardList boardList = new BoardList(); // 추후 추가
+        BoardList boardList = listRepository.findByIdOrElseThrow(listId);
         List<File> files = fileIds.stream()
                 .map(fileRepository::findByIdOrElseThrow)
                 .toList();
