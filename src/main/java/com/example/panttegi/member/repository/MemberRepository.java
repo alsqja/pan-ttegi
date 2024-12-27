@@ -29,4 +29,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
         }
         return members;
     }
+
+    @Query("SELECT m FROM Member m WHERE m.user.email = :email AND m.workspace.id = :workspaceId")
+    Member findByEmailAndWorkspaceId(String email, Long workspaceId);
 }

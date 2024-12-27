@@ -1,11 +1,11 @@
 package com.example.panttegi.card.service;
 
-import com.example.panttegi.card.entity.Card;
 import com.example.panttegi.card.dto.CardResponseDto;
+import com.example.panttegi.card.entity.Card;
 import com.example.panttegi.card.repository.CardRepository;
 import com.example.panttegi.file.repository.FileRepository;
 import com.example.panttegi.file.repository.entity.File;
-import com.example.panttegi.list.BoardList;
+import com.example.panttegi.list.entity.BoardList;
 import com.example.panttegi.user.entity.User;
 import com.example.panttegi.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,9 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

@@ -2,6 +2,7 @@ package com.example.panttegi.config.filter;
 
 import com.example.panttegi.util.AuthenticationScheme;
 import com.example.panttegi.util.JwtProvider;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,9 +21,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Arrays;
-
-import static com.example.panttegi.config.WebConfig.WHITE_LIST;
 
 @Component
 @RequiredArgsConstructor
@@ -40,20 +38,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
 
-        try {
-            if (!isWhiteListed(request.getRequestURI())) {
-                authenticate(request, response);
-            }
-        } catch (Exception e) {
-            request.setAttribute("exception", e);
-        }
+        authenticate(request, response);
 
         filterChain.doFilter(request, response);
-    }
-
-    private boolean isWhiteListed(String requestUri) {
-        return Arrays.stream(WHITE_LIST)
-                .anyMatch(requestUri::startsWith);
     }
 
     private void authenticate(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -61,7 +48,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String token = getTokenFromRequest(request);
         if (!jwtProvider.validToken(token)) {
             //  refreshToken 설정?
-//            throw new JwtException("Invalid or expired JWT token");
             return;
         }
 
