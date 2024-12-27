@@ -1,18 +1,23 @@
 package com.example.panttegi.card.controller;
 
+import com.example.panttegi.card.dto.PatchCardRequestDto;
 import com.example.panttegi.card.dto.PostCardRequestDto;
 import com.example.panttegi.card.dto.CardResponseDto;
+import com.example.panttegi.card.dto.SearchCardResponseDto;
 import com.example.panttegi.card.service.CardService;
 import com.example.panttegi.common.CommonResDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/api/cards")
+@RequestMapping("/api/workspaces/{workspaceId}/cards")
 @RequiredArgsConstructor
 public class CardController {
     private final CardService cardService;
@@ -31,7 +36,7 @@ public class CardController {
                 postCardRequestDto.getEndAt(),
                 authentication.getName(),
                 postCardRequestDto.getManagerId(),
-                postCardRequestDto.getBoardListId(),
+                postCardRequestDto.getListId(),
                 postCardRequestDto.getFileIds()
                 );
 
@@ -49,15 +54,37 @@ public class CardController {
         return new ResponseEntity<>(new CommonResDto<>("카드 단일 조회 완료", card), HttpStatus.OK);
     }
 
+    // 카드 검색
+    @GetMapping
+    public ResponseEntity<CommonResDto<SearchCardResponseDto>> searchCard(
+            @RequestParam(required = false) Long workspaceId,
+            @RequestParam(required = false) Long boardId,
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String description,
+            @RequestParam(required = false) String managerName,
+            @RequestParam(defaultValue = "0") int page
+    ) {
+
+        Page<CardResponseDto> pages = cardService.searchCard(workspaceId, boardId, title, description, managerName, page);
+
+        int totalPages = pages.getTotalPages();
+        long totalElements = pages.getTotalElements();
+        List<CardResponseDto> content = pages.getContent();
+
+        SearchCardResponseDto cards = new SearchCardResponseDto(totalPages, totalElements, content);
+
+        return new ResponseEntity<>(new CommonResDto<>("카드 검색 완료", cards), HttpStatus.OK);
+    }
+
     // 카드 수정 (아직 미완)
     @PatchMapping("/{cardId}")
-    public ResponseEntity<Void> updateCard(
+    public ResponseEntity<CommonResDto<CardResponseDto>> updateCard(
             @PathVariable Long cardId,
-            @Valid @RequestBody PostCardRequestDto postCardRequestDto,
+            @Valid @RequestBody PatchCardRequestDto postCardRequestDto,
             Authentication authentication
     ) {
 
-        cardService.updateCard(
+        CardResponseDto card = cardService.updateCard(
                 cardId,
                 postCardRequestDto.getTitle(),
                 postCardRequestDto.getDescription(),
@@ -65,12 +92,11 @@ public class CardController {
                 postCardRequestDto.getEndAt(),
                 authentication.getName(),
                 postCardRequestDto.getManagerId(),
-                postCardRequestDto.getBoardListId(),
+                postCardRequestDto.getListId(),
                 postCardRequestDto.getFileIds()
         );
 
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
+        return new ResponseEntity<>(new CommonResDto<>("카드 수정 완료", card), HttpStatus.OK);
     }
 
     // 카드 삭제

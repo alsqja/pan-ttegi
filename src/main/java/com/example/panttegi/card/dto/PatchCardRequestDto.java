@@ -10,22 +10,18 @@ import java.util.List;
 
 @Getter
 @RequiredArgsConstructor
-public class PostCardRequestDto {
+public class PatchCardRequestDto {
 
-    @NotBlank(message = "BAD_INPUT")
     private final String title;
 
-    @NotBlank(message = "BAD_INPUT")
     private final String description;
 
-    @NotNull(message = "BAD_INPUT")
     private final int position;
 
     private final LocalDateTime endAt;
 
     private final Long managerId;
 
-    @NotNull(message = "BAD_INPUT")
     private final Long listId;
 
     private final List<Long> fileIds;
