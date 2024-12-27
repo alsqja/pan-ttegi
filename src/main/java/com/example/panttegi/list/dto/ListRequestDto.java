@@ -13,5 +13,5 @@ public class ListRequestDto {
     private final String title;
 
     @NotNull(message = "BAD_INPUT")
-    private final Double position;
+    private final Integer targetIndex;
 }

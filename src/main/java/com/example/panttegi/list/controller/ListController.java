@@ -27,7 +27,6 @@ public class ListController {
         ListResponseDto response = listService.createList(
                 boardId,
                 listRequestDto.getTitle(),
-                listRequestDto.getPosition(),
                 authentication.getName()
         );
 
@@ -44,7 +43,7 @@ public class ListController {
         ListResponseDto response = listService.updateList(
                 listId,
                 listRequestDto.getTitle(),
-                listRequestDto.getPosition(),
+                listRequestDto.getTargetIndex(),
                 authentication.getName());
 
         return new ResponseEntity<>(new CommonResDto<>("리스트 수정 완료", response), HttpStatus.OK);
