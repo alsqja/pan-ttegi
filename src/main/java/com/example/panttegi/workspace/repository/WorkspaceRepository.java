@@ -4,7 +4,9 @@ import com.example.panttegi.error.errorcode.ErrorCode;
 import com.example.panttegi.error.exception.CustomException;
 import com.example.panttegi.workspace.entity.Workspace;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface WorkspaceRepository extends JpaRepository<Workspace, Long> {
 
     default Workspace findByIdOrElseThrow(Long workspaceId) {

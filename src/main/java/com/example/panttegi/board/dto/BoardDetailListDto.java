@@ -11,6 +11,6 @@ public class BoardDetailListDto {
 
     private final Long id;
     private final String title;
-    private final int position;
+    private final Double position;
     private final List<BoardDetailCardDto> cards;
 }

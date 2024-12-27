@@ -18,7 +18,7 @@ public class BoardData {
 
     private Long listId;
     private String listTitle;
-    private int listPosition;
+    private Double listPosition;
 
     private Long cardId;
     private String cardTitle;
