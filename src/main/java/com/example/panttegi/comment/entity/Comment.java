@@ -1,4 +1,4 @@
-package com.example.panttegi.comment;
+package com.example.panttegi.comment.entity;
 
 import com.example.panttegi.card.entity.Card;
 import com.example.panttegi.common.BaseEntity;
@@ -39,5 +39,10 @@ public class Comment extends BaseEntity {
         this.content = content;
         this.user = user;
         this.card = card;
+    }
+
+    public Comment updateContent(String content) {
+        this.content = content;
+        return this;
     }
 }
