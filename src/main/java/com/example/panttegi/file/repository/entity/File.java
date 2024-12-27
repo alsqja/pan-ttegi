@@ -1,4 +1,4 @@
-package com.example.panttegi.file;
+package com.example.panttegi.file.repository.entity;
 
 import com.example.panttegi.card.entity.Card;
 import com.example.panttegi.user.entity.User;

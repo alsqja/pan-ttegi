@@ -2,6 +2,7 @@ package com.example.panttegi.config.filter;
 
 import com.example.panttegi.util.AuthenticationScheme;
 import com.example.panttegi.util.JwtProvider;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

@@ -1,19 +1,10 @@
-package com.example.panttegi.list;
+package com.example.panttegi.list.entity;
 
 import com.example.panttegi.board.entity.Board;
 import com.example.panttegi.card.entity.Card;
 import com.example.panttegi.common.BaseEntity;
 import com.example.panttegi.user.entity.User;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -34,7 +25,7 @@ public class BoardList extends BaseEntity {
     private String title;
 
     @Column(name = "position", nullable = false)
-    private int position;
+    private Double position;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -47,10 +38,18 @@ public class BoardList extends BaseEntity {
     @OneToMany(mappedBy = "boardList", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Card> cards = new ArrayList<>();
 
-    public BoardList(String title, int position, User user, Board board) {
+    public BoardList(String title, Double position, User user, Board board) {
         this.title = title;
         this.position = position;
         this.user = user;
         this.board = board;
+    }
+
+    public void updateTitle(String title) {
+        this.title = title;
+    }
+
+    public void updatePosition(Double position) {
+        this.position = position;
     }
 }

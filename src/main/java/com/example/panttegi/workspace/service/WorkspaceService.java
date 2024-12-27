@@ -1,10 +1,13 @@
 package com.example.panttegi.workspace.service;
 
 import com.example.panttegi.enums.MemberRole;
+import com.example.panttegi.error.errorcode.ErrorCode;
+import com.example.panttegi.error.exception.CustomException;
 import com.example.panttegi.member.entity.Member;
 import com.example.panttegi.member.repository.MemberRepository;
 import com.example.panttegi.user.entity.User;
 import com.example.panttegi.user.repository.UserRepository;
+import com.example.panttegi.workspace.dto.WorkspaceInviteResponseDto;
 import com.example.panttegi.workspace.dto.WorkspaceResponseDto;
 import com.example.panttegi.workspace.entity.Workspace;
 import com.example.panttegi.workspace.repository.WorkspaceRepository;
@@ -66,5 +69,31 @@ public class WorkspaceService {
         workspace.updateWorkspace(name, description);
 
         return new WorkspaceResponseDto(workspace);
+    }
+
+    @Transactional
+    public void deleteWorkspace(Long workspaceId, String email) {
+        User user = userRepository.findByEmailOrElseThrow(email);
+
+        Workspace workspace = workspaceRepository.findByIdOrElseThrow(workspaceId);
+
+        workspaceRepository.delete(workspace);
+    }
+
+    @Transactional
+    public WorkspaceInviteResponseDto inviteMember(Long workspaceId, String inviteEmail, MemberRole role, String inviterEmail) {
+        User inviter = userRepository.findByEmailOrElseThrow(inviterEmail);
+        User invitee = userRepository.findByEmailOrElseThrow(inviteEmail);
+
+        Workspace workspace = workspaceRepository.findByIdOrElseThrow(workspaceId);
+
+        boolean alreadyMember = memberRepository.findByUserAndWorkspace(invitee, workspace).isPresent();
+        if (alreadyMember) {
+            throw new CustomException(ErrorCode.BAD_REQUEST);
+        }
+
+        Member newMember = memberRepository.save(new Member(role, invitee, workspace));
+
+        return new WorkspaceInviteResponseDto(newMember);
     }
 }
