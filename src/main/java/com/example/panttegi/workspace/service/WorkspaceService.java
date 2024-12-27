@@ -27,17 +27,18 @@ public class WorkspaceService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public WorkspaceResponseDto createWorkspace(String name, String description, String email) {
+    public WorkspaceResponseDto createWorkspace(Workspace workspace, String email) {
+
         User user = userRepository.findByEmailOrElseThrow(email);
 
-        Workspace workspace = workspaceRepository.save(
-                new Workspace(name, description, user)
-        );
+        workspace.updateUser(user);
 
-        Member member = new Member(MemberRole.WORKSPACE, user, workspace);
+        Workspace saveWorkspace = workspaceRepository.save(workspace);
+
+        Member member = new Member(MemberRole.WORKSPACE, user, saveWorkspace);
         memberRepository.save(member);
 
-        return new WorkspaceResponseDto(workspace);
+        return new WorkspaceResponseDto(saveWorkspace);
     }
 
     public List<WorkspaceResponseDto> getAllWorkspaces(String email) {
