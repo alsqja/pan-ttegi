@@ -13,13 +13,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/cards/{cardId}/comments")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class CommentController {
     private final CommentService commentService;
 
     // 댓글 생성
-    @PostMapping
+    @PostMapping("/cards/{cardId}/comments")
     public ResponseEntity<CommonResDto<CommentResponseDto>> createComment(
             @PathVariable Long cardId,
             @RequestBody CommentRequestDto commentRequestDto,
@@ -28,15 +28,15 @@ public class CommentController {
 
         CommentResponseDto comment = commentService.createComment(
                 cardId,
-                commentRequestDto.getContent(),
-                authentication.getName()
+                authentication.getName(),
+                commentRequestDto.getContent()
         );
 
         return new ResponseEntity<>(new CommonResDto<>("댓글 생성 완료", comment), HttpStatus.CREATED);
     }
 
     // 댓글 수정
-    @PatchMapping("/{commentId}")
+    @PatchMapping("/workspaces/{workspaceId}/comments/{commentId}")
     public ResponseEntity<CommonResDto<CommentResponseDto>> updateComment(
             @PathVariable Long commentId,
             @Valid @RequestBody CommentRequestDto commentRequestDto,
@@ -45,17 +45,16 @@ public class CommentController {
 
         CommentResponseDto comment = commentService.updateComment(commentId, commentRequestDto.getContent(), authentication.getName());
 
-        return new ResponseEntity<>(new CommonResDto<>("댓글 수정 완료", comment), HttpStatus.CREATED);
+        return new ResponseEntity<>(new CommonResDto<>("댓글 수정 완료", comment), HttpStatus.OK);
     }
 
     // 댓글 삭제
-    @DeleteMapping("/{commentId}")
+    @DeleteMapping("/workspaces/{workspaceId}/comments/{commentId}")
     public ResponseEntity<Void> deleteComment(
-            @PathVariable Long commentId,
-            Authentication authentication
+            @PathVariable Long commentId
     ) {
 
-        commentService.deleteComment(commentId, authentication.getName());
+        commentService.deleteComment(commentId);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

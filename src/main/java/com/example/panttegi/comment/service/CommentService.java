@@ -38,8 +38,7 @@ public class CommentService {
     }
 
     // 댓글 삭제
-    public void deleteComment(Long commentId, String email) {
-        userRepository.findByEmailOrElseThrow(email);
+    public void deleteComment(Long commentId) {
 
         Comment comment = commentRepository.findByIdOrElseThrow(commentId);
 
