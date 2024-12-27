@@ -17,7 +17,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.security.web.access.ExceptionTranslationFilter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -29,7 +29,7 @@ public class WebConfig {
     private final AuthenticationEntryPoint authEntryPoint;
     private final AccessDeniedHandler accessDeniedHandler;
 
-    public static final String[] WHITE_LIST = {"/api/auth/login", "/api/auth/signup", "/error"};
+    private static final String[] WHITE_LIST = {"/api/auth/login", "/api/auth/signup", "/error"};
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -39,8 +39,7 @@ public class WebConfig {
                         auth.requestMatchers(WHITE_LIST).permitAll()
                                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                                 .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.INCLUDE, DispatcherType.ERROR).permitAll()
-                                .requestMatchers("/api/workspaces").hasRole("ADMIN")
-                                .requestMatchers(HttpMethod.GET, "/api/workspaces").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/workspaces").hasRole("ADMIN")
                                 .anyRequest().authenticated()
                 )
                 .exceptionHandling(handler -> handler
@@ -51,8 +50,7 @@ public class WebConfig {
                         session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authenticationProvider(authenticationProvider)
-//                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-                .addFilterAfter(jwtAuthFilter, ExceptionTranslationFilter.class);
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

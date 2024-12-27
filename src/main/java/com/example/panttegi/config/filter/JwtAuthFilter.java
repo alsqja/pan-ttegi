@@ -20,9 +20,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Arrays;
-
-import static com.example.panttegi.config.WebConfig.WHITE_LIST;
 
 @Component
 @RequiredArgsConstructor
@@ -43,11 +40,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         authenticate(request, response);
 
         filterChain.doFilter(request, response);
-    }
-
-    private boolean isWhiteListed(String requestUri) {
-        return Arrays.stream(WHITE_LIST)
-                .anyMatch(requestUri::startsWith);
     }
 
     private void authenticate(HttpServletRequest request, HttpServletResponse response) throws IOException {
