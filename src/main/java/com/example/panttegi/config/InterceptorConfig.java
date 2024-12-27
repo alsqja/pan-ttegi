@@ -17,15 +17,17 @@ public class InterceptorConfig implements WebMvcConfigurer {
 
     private static final String[] WORKSPACE_PATH_LIST = {"/api/workspaces"};
     private static final String[] BOARD_PATH_LIST = {"/api/workspaces/**"};
+    private static final String[] BOARD_WHITE_LIST = {"/api/workspaces"};
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(workspaceRoleInterceptor)
-                .addPathPatterns(WORKSPACE_PATH_LIST)
-                .order(Ordered.HIGHEST_PRECEDENCE);
+//        registry.addInterceptor(workspaceRoleInterceptor)
+//                .addPathPatterns(WORKSPACE_PATH_LIST)
+//                .order(Ordered.HIGHEST_PRECEDENCE);
 
         registry.addInterceptor(boardRoleInterceptor)
                 .addPathPatterns(BOARD_PATH_LIST)
+                .excludePathPatterns(BOARD_WHITE_LIST)
                 .order(Ordered.HIGHEST_PRECEDENCE + 1);
     }
 }
