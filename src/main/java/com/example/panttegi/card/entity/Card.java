@@ -65,11 +65,15 @@ public class Card extends BaseEntity {
     }
 
     public void updateTitle(String title) {
-        this.title = title;
+        if (title != null) {
+            this.title = title;
+        }
     }
 
     public void updateDescription(String description) {
-        this.description = description;
+        if (description != null) {
+            this.description = description;
+        }
     }
 
     public void updatePosition(int position) {
@@ -77,19 +81,27 @@ public class Card extends BaseEntity {
     }
 
     public void updateEndAt(LocalDateTime endAt) {
-        this.endAt = endAt;
+        if (endAt != null) {
+            this.endAt = endAt;
+        }
     }
 
     public void updateManager(User manager) {
-        this.manager = manager;
+        if (manager != null) {
+            this.manager = manager;
+        }
     }
 
     public void updateBoardList(BoardList boardList) {
-        this.boardList = boardList;
+        if (boardList != null) {
+            this.boardList = boardList;
+        }
     }
 
     public void updateFiles(List<File> files) {
-        this.files = files;
+        if (files != null) {
+            this.files = files;
+        }
     }
 
 
