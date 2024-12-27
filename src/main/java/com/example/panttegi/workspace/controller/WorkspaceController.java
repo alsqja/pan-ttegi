@@ -2,6 +2,8 @@ package com.example.panttegi.workspace.controller;
 
 import com.example.panttegi.common.CommonListResDto;
 import com.example.panttegi.common.CommonResDto;
+import com.example.panttegi.workspace.dto.WorkspaceInviteRequestDto;
+import com.example.panttegi.workspace.dto.WorkspaceInviteResponseDto;
 import com.example.panttegi.workspace.dto.WorkspaceRequestDto;
 import com.example.panttegi.workspace.dto.WorkspaceResponseDto;
 import com.example.panttegi.workspace.service.WorkspaceService;
@@ -78,5 +80,21 @@ public class WorkspaceController {
         workspaceService.deleteWorkspace(workspaceId, authentication.getName());
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("/{workspaceId}/invite-member")
+    public ResponseEntity<CommonResDto<WorkspaceInviteResponseDto>> inviteMember(
+            @PathVariable Long workspaceId,
+            @Valid @RequestBody WorkspaceInviteRequestDto workspaceInviteRequestDto,
+            Authentication authentication
+    ) {
+        WorkspaceInviteResponseDto responseDto = workspaceService.inviteMember(
+                workspaceId,
+                workspaceInviteRequestDto.getEmail(),
+                workspaceInviteRequestDto.getRole(),
+                authentication.getName()
+        );
+
+        return new ResponseEntity<>(new CommonResDto<>("워크스페이스 초대 완료", responseDto), HttpStatus.CREATED);
     }
 }
