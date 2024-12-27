@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/cards")
+@RequestMapping("/api/workspaces/{workspaceId}/cards")
 @RequiredArgsConstructor
 public class CardController {
     private final CardService cardService;
