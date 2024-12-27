@@ -3,6 +3,7 @@ package com.example.panttegi.comment.controller;
 import com.example.panttegi.card.dto.CardResponseDto;
 import com.example.panttegi.comment.dto.CommentRequestDto;
 import com.example.panttegi.comment.dto.CommentResponseDto;
+import com.example.panttegi.comment.dto.UpdateCommentRequestDto;
 import com.example.panttegi.comment.service.CommentService;
 import com.example.panttegi.common.CommonResDto;
 import jakarta.validation.Valid;
@@ -38,11 +39,11 @@ public class CommentController {
     @PatchMapping("/{commentId}")
     public ResponseEntity<CommonResDto<CommentResponseDto>> updateComment(
             @PathVariable Long commentId,
-            @Valid @RequestBody CommentRequestDto commentRequestDto,
+            @Valid @RequestBody UpdateCommentRequestDto updateCommentRequestDto,
             Authentication authentication
     ) {
 
-        CommentResponseDto comment = commentService.updateComment(commentId, commentRequestDto.getContent(), authentication.getName());
+        CommentResponseDto comment = commentService.updateComment(commentId, updateCommentRequestDto.getContent(), authentication.getName());
 
         return new ResponseEntity<>(new CommonResDto<>("댓글 수정 완료", comment), HttpStatus.OK);
     }
