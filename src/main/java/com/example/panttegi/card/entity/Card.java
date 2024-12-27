@@ -72,4 +72,34 @@ public class Card extends BaseEntity {
         this.boardList = boardList;
         this.files = files;
     }
+
+    public void updateTitle(String title) {
+        this.title = title;
+    }
+
+    public void updateDescription(String description) {
+        this.description = description;
+    }
+
+    public void updatePosition(int position) {
+        this.position = position;
+    }
+
+    public void updateEndAt(LocalDateTime endAt) {
+        this.endAt = endAt;
+    }
+
+    public void updateManager(User manager) {
+        this.manager = manager;
+    }
+
+    public void updateBoardList(BoardList boardList) {
+        this.boardList = boardList;
+    }
+
+    public void updateFiles(List<File> files) {
+        this.files = files;
+    }
+
+
 }

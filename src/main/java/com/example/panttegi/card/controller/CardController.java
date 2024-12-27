@@ -1,5 +1,6 @@
 package com.example.panttegi.card.controller;
 
+import com.example.panttegi.card.dto.PatchCardRequestDto;
 import com.example.panttegi.card.dto.PostCardRequestDto;
 import com.example.panttegi.card.dto.CardResponseDto;
 import com.example.panttegi.card.service.CardService;
@@ -51,13 +52,13 @@ public class CardController {
 
     // 카드 수정 (아직 미완)
     @PatchMapping("/{cardId}")
-    public ResponseEntity<Void> updateCard(
+    public ResponseEntity<CommonResDto<CardResponseDto>> updateCard(
             @PathVariable Long cardId,
-            @Valid @RequestBody PostCardRequestDto postCardRequestDto,
+            @Valid @RequestBody PatchCardRequestDto postCardRequestDto,
             Authentication authentication
     ) {
 
-        cardService.updateCard(
+        CardResponseDto card = cardService.updateCard(
                 cardId,
                 postCardRequestDto.getTitle(),
                 postCardRequestDto.getDescription(),
@@ -69,8 +70,7 @@ public class CardController {
                 postCardRequestDto.getFileIds()
         );
 
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
+        return new ResponseEntity<>(new CommonResDto<>("카드 수정 완료", card), HttpStatus.OK);
     }
 
     // 카드 삭제
