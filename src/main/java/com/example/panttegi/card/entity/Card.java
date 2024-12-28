@@ -30,7 +30,7 @@ public class Card extends BaseEntity {
     private String description;
 
     @Column(name = "position", nullable = false)
-    private int position;
+    private String position;
 
     @Column(name = "end_at", nullable = false)
     private LocalDateTime endAt;
@@ -53,7 +53,7 @@ public class Card extends BaseEntity {
     @OneToMany(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<File> files = new ArrayList<>();
 
-    public Card(String title, String description, int position, LocalDateTime endAt, User user, User manager, BoardList boardList, List<File> files) {
+    public Card(String title, String description, String position, LocalDateTime endAt, User user, User manager, BoardList boardList, List<File> files) {
         this.title = title;
         this.description = description;
         this.position = position;
@@ -76,7 +76,7 @@ public class Card extends BaseEntity {
         }
     }
 
-    public void updatePosition(int position) {
+    public void updatePosition(String position) {
         this.position = position;
     }
 
@@ -100,7 +100,8 @@ public class Card extends BaseEntity {
 
     public void updateFiles(List<File> files) {
         if (files != null) {
-            this.files = files;
+            this.files.clear();
+            this.files.addAll(files);
         }
     }
 

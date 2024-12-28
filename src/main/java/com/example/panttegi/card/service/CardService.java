@@ -11,6 +11,7 @@ import com.example.panttegi.list.entity.BoardList;
 import com.example.panttegi.list.repository.ListRepository;
 import com.example.panttegi.user.entity.User;
 import com.example.panttegi.user.repository.UserRepository;
+import com.example.panttegi.util.LexoRank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,17 +33,23 @@ public class CardService {
 
     // 카드 생성
     public CardResponseDto postCard(
-            String title, String description, int position, LocalDateTime endAt,
+            String title, String description, Long beforeCardId, Long afterCardId, LocalDateTime endAt,
             String email, Long managerId, Long listId, List<Long> fileIds
     ) {
 
         User user = userRepository.findByEmailOrElseThrow(email);
         User manager = userRepository.findByIdOrElseThrow(managerId);
         BoardList boardList = listRepository.findByIdOrElseThrow(listId);
-        
+        Card beforeCard = beforeCardId != 0 ? cardRepository.findByIdOrElseThrow(beforeCardId) : null;
+        Card afterCard = afterCardId != 0 ? cardRepository.findByIdOrElseThrow(afterCardId) : null;
+
         List<File> files = fileIds.stream()
                 .map(fileRepository::findByIdOrElseThrow)
                 .toList();
+
+        String position = LexoRank.getMiddleRank(
+                beforeCard != null ? beforeCard.getPosition() : null,
+                afterCard != null ? afterCard.getPosition() : null);
 
         Card card = new Card(title, description, position, endAt,
                 user, manager, boardList, files);
@@ -66,14 +74,16 @@ public class CardService {
                 .map(CardResponseDto::new);
     }
 
-    // 카드 수정 (포지션 수정)
+    // 카드 수정
     @Transactional
     public CardResponseDto updateCard(
-            Long cardId, String title, String description, int position, LocalDateTime endAt,
+            Long cardId, String title, String description, Long beforeCardId, Long afterCardId, LocalDateTime endAt,
             String email, Long managerId, Long listId, List<Long> fileIds
     ) {
 
         Card card = cardRepository.findByIdOrElseThrow(cardId);
+        Card beforeCard = beforeCardId != 0 ? cardRepository.findByIdOrElseThrow(beforeCardId) : null;
+        Card afterCard = afterCardId != 0 ? cardRepository.findByIdOrElseThrow(afterCardId) : null;
         User user = userRepository.findByEmailOrElseThrow(email);
         User manager = userRepository.findByIdOrElseThrow(managerId);
         BoardList boardList = listRepository.findByIdOrElseThrow(listId);
@@ -83,7 +93,9 @@ public class CardService {
 
         card.updateTitle(title);
         card.updateDescription(description);
-        card.updatePosition(position);
+        card.updatePosition(LexoRank.getMiddleRank(
+                beforeCard != null ? beforeCard.getPosition() : null,
+                afterCard != null ? afterCard.getPosition() : null));
         card.updateEndAt(endAt);
         card.updateManager(manager);
         card.updateBoardList(boardList);
