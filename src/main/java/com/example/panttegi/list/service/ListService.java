@@ -2,6 +2,7 @@ package com.example.panttegi.list.service;
 
 import com.example.panttegi.board.entity.Board;
 import com.example.panttegi.board.repository.BoardRepository;
+import com.example.panttegi.common.Const;
 import com.example.panttegi.error.errorcode.ErrorCode;
 import com.example.panttegi.error.exception.CustomException;
 import com.example.panttegi.list.dto.ListResponseDto;
@@ -12,11 +13,13 @@ import com.example.panttegi.user.repository.UserRepository;
 import com.example.panttegi.workspace.entity.Workspace;
 import com.example.panttegi.workspace.repository.WorkspaceRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +29,7 @@ public class ListService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
     private final WorkspaceRepository workspaceRepository;
+    private final StringRedisTemplate redisTemplate;
 
     @Transactional
     public ListResponseDto createList(Long workspaceId, Long boardId, String title, String email) {
@@ -48,27 +52,40 @@ public class ListService {
 
     @Transactional
     public ListResponseDto updateList(Long workspaceId, Long listId, String title, int targetIndex, String email) {
-        BoardList targetList = listRepository.findByIdOrElseThrow(listId);
 
-        if (!targetList.getBoard().getWorkspace().getId().equals(workspaceId)) {
-            throw new CustomException(ErrorCode.BAD_REQUEST);
+        String lockKey = "updateList:lock" + listId;
+
+        Boolean lockAcquired = redisTemplate.opsForValue().setIfAbsent(lockKey, "locked", Const.LOCK_EXPIRATION_TIME, TimeUnit.MILLISECONDS);
+
+        if (Boolean.FALSE.equals(lockAcquired)) {
+            throw new CustomException(ErrorCode.CONCURRENCY_CONFLICT);
         }
 
-        List<BoardList> lists = listRepository.findByBoardId(targetList.getBoard().getId());
-        lists.sort(Comparator.comparing(BoardList::getPosition));
+        try {
+            BoardList targetList = listRepository.findByIdOrElseThrow(listId);
 
-        if (targetIndex < 0 || targetIndex > lists.size()) {
-            throw new CustomException(ErrorCode.BAD_REQUEST);
+            if (!targetList.getBoard().getWorkspace().getId().equals(workspaceId)) {
+                throw new CustomException(ErrorCode.BAD_REQUEST);
+            }
+
+            List<BoardList> lists = listRepository.findByBoardId(targetList.getBoard().getId());
+            lists.sort(Comparator.comparing(BoardList::getPosition));
+
+            if (targetIndex < 0 || targetIndex > lists.size()) {
+                throw new CustomException(ErrorCode.BAD_REQUEST);
+            }
+
+            if (title != null) {
+                targetList.updateTitle(title);
+            }
+
+            Double newPosition = calculateNewPosition(lists, targetIndex);
+            targetList.updatePosition(newPosition);
+
+            return new ListResponseDto(targetList);
+        } finally {
+            redisTemplate.delete(lockKey);
         }
-
-        if (title != null) {
-            targetList.updateTitle(title);
-        }
-
-        Double newPosition = calculateNewPosition(lists, targetIndex);
-        targetList.updatePosition(newPosition);
-
-        return new ListResponseDto(targetList);
     }
 
     @Transactional
