@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,16 +29,21 @@ public class FileService {
     private final S3Uploader s3Uploader;
 
     @Transactional
-    public FileResponseDto uploadFile(MultipartFile file, Long cardId, String email) {
+    public List<FileResponseDto> uploadFiles(List<MultipartFile> files, Long cardId, String email) {
         User user = userRepository.findByEmailOrElseThrow(email);
         Card card = cardRepository.findByIdOrElseThrow(cardId);
 
-        String fileUrl = s3Uploader.uploadFile(file);
+        List<File> uploadedFiles = new ArrayList<>();
 
-        File uploadedFile = new File(fileUrl, user, card);
-        File savedFile = fileRepository.save(uploadedFile);
+        for (MultipartFile file : files) {
+            String fileUrl = s3Uploader.uploadFile(file);
+            File uploadedFile = fileRepository.save(new File(fileUrl, user, card));
+            uploadedFiles.add(uploadedFile);
+        }
 
-        return new FileResponseDto(savedFile);
+        return uploadedFiles.stream()
+                .map(FileResponseDto::new)
+                .collect(Collectors.toList());
     }
 
     public List<FileResponseDto> getFiles(Long cardId) {

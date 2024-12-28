@@ -1,7 +1,6 @@
 package com.example.panttegi.file.controller;
 
 import com.example.panttegi.common.CommonListResDto;
-import com.example.panttegi.common.CommonResDto;
 import com.example.panttegi.file.dto.FileResponseDto;
 import com.example.panttegi.file.service.FileService;
 import lombok.RequiredArgsConstructor;
@@ -21,13 +20,13 @@ public class FileController {
     private final FileService fileService;
 
     @PostMapping
-    public ResponseEntity<CommonResDto<FileResponseDto>> uploadFile(
-            @RequestParam MultipartFile file,
+    public ResponseEntity<CommonListResDto<FileResponseDto>> uploadFiles(
+            @RequestParam List<MultipartFile> files,
             @RequestParam Long cardId,
             Authentication authentication
     ) {
-        FileResponseDto response = fileService.uploadFile(file, cardId, authentication.getName());
-        return new ResponseEntity<>(new CommonResDto<>("파일 업로드 완료", response), HttpStatus.CREATED);
+        List<FileResponseDto> response = fileService.uploadFiles(files, cardId, authentication.getName());
+        return new ResponseEntity<>(new CommonListResDto<>("파일 업로드 완료", response), HttpStatus.CREATED);
     }
 
     @GetMapping

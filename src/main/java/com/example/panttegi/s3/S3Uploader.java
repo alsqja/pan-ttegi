@@ -5,6 +5,7 @@ import com.example.panttegi.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
@@ -22,21 +23,27 @@ public class S3Uploader {
     public String uploadFile(MultipartFile file) {
         validateFile(file);
 
-        String fileName = generateUniqueFileName(file.getOriginalFilename());
+        String originalFilename = file.getOriginalFilename();
+        String uniqueFilename = UUID.randomUUID() + "_" + originalFilename;
+
+        System.out.println("Original filename: " + originalFilename);
+        System.out.println("Generated unique filename: " + uniqueFilename);
+
         try {
             s3Client.putObject(
                     PutObjectRequest.builder()
                             .bucket(bucketName)
-                            .key(fileName)
+                            .key(uniqueFilename)
                             .contentType(file.getContentType())
                             .build(),
-                    software.amazon.awssdk.core.sync.RequestBody.fromInputStream(file.getInputStream(), file.getSize())
+                    RequestBody.fromInputStream(file.getInputStream(), file.getSize())
             );
         } catch (IOException e) {
+            e.printStackTrace();
             throw new CustomException(ErrorCode.BAD_REQUEST);
         }
 
-        return String.format("https://%s.s3.amazonaws.com/%s", bucketName, fileName);
+        return String.format("https://%s.s3.amazonaws.com/%s", bucketName, uniqueFilename);
     }
 
     public void deleteFile(String fileUrl) {
@@ -46,10 +53,6 @@ public class S3Uploader {
         } catch (Exception e) {
             throw new CustomException(ErrorCode.BAD_REQUEST);
         }
-    }
-
-    private String generateUniqueFileName(String originalFileName) {
-        return UUID.randomUUID() + "_" + originalFileName;
     }
 
     private String extractFileNameFromUrl(String fileUrl) {
