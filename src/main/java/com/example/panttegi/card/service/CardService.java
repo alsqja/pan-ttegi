@@ -4,6 +4,7 @@ import com.example.panttegi.card.dto.CardRankingResponseDto;
 import com.example.panttegi.card.dto.CardResponseDto;
 import com.example.panttegi.card.entity.Card;
 import com.example.panttegi.card.repository.CardRepository;
+import com.example.panttegi.common.Const;
 import com.example.panttegi.file.repository.FileRepository;
 import com.example.panttegi.file.repository.entity.File;
 import com.example.panttegi.list.entity.BoardList;
@@ -38,10 +39,6 @@ public class CardService {
     private final StringRedisTemplate redisTemplate;
     private final ZSetOperations<String, String> zSetOperations;
 
-    private static final String CARD_VIEW_KEY_PREFIX = "card:view:";
-    private static final String CARD_USER_VIEW_KEY_PREFIX = "card:user:view:";
-    private static final String CARD_VIEW_RANKING_KEY = "card:ranking";
-
     // 카드 생성
     public CardResponseDto postCard(
             String title, String description, int position, LocalDateTime endAt,
@@ -74,7 +71,7 @@ public class CardService {
 
     // 카드 랭킹 조회
     public List<CardRankingResponseDto> getCardRanking(int limit) {
-        Set<ZSetOperations.TypedTuple<String>> rankingSet = zSetOperations.reverseRangeWithScores(CARD_VIEW_RANKING_KEY, 0, limit - 1);
+        Set<ZSetOperations.TypedTuple<String>> rankingSet = zSetOperations.reverseRangeWithScores(Const.CARD_VIEW_RANKING_KEY, 0, limit - 1);
 
         if (rankingSet == null || rankingSet.isEmpty()) {
             return List.of();
@@ -84,7 +81,7 @@ public class CardService {
             Long cardId = Long.parseLong(Objects.requireNonNull(tuple.getValue()));
             Card card = cardRepository.findByIdOrElseThrow(cardId);
             Double viewCount = Objects.requireNonNull(tuple.getScore());
-            Long rank = zSetOperations.reverseRank(CARD_VIEW_RANKING_KEY, tuple.getValue()) + 1;
+            Long rank = zSetOperations.reverseRank(Const.CARD_VIEW_RANKING_KEY, tuple.getValue()) + 1;
 
             return new CardRankingResponseDto(new CardResponseDto(card), viewCount, rank);
         }).toList();
@@ -137,8 +134,8 @@ public class CardService {
     }
 
     private void updateCardViewCount(Long cardId, String userEmail) {
-        String cardKey = CARD_VIEW_KEY_PREFIX + cardId;
-        String userKey = CARD_USER_VIEW_KEY_PREFIX + cardId + ":" + userEmail;
+        String cardKey = Const.CARD_VIEW_KEY_PREFIX + cardId;
+        String userKey = Const.CARD_USER_VIEW_KEY_PREFIX + cardId + ":" + userEmail;
 
         ValueOperations<String, String> ops = redisTemplate.opsForValue();
 
@@ -153,23 +150,23 @@ public class CardService {
         // 조회수 증가
         redisTemplate.boundValueOps(cardKey).increment(1);
         // 랭킹 갱신
-        zSetOperations.incrementScore(CARD_VIEW_RANKING_KEY, String.valueOf(cardId), 1);
+        zSetOperations.incrementScore(Const.CARD_VIEW_RANKING_KEY, String.valueOf(cardId), 1);
     }
 
     public Long getCardViewCount(Long cardId) {
-        String cardKey = CARD_VIEW_KEY_PREFIX + cardId;
+        String cardKey = Const.CARD_VIEW_KEY_PREFIX + cardId;
         String count = redisTemplate.opsForValue().get(cardKey);
         return count == null ? 0L : Long.parseLong(count);
     }
 
     @Scheduled(cron = "0 0 0 * * ?") // 매일 자정
     public void resetCardViewCounts() {
-        for (String key : Objects.requireNonNull(redisTemplate.keys(CARD_VIEW_KEY_PREFIX + "*"))) {
+        for (String key : Objects.requireNonNull(redisTemplate.keys(Const.CARD_VIEW_KEY_PREFIX + "*"))) {
             redisTemplate.delete(key);
         }
-        for (String key : Objects.requireNonNull(redisTemplate.keys(CARD_USER_VIEW_KEY_PREFIX + "*"))) {
+        for (String key : Objects.requireNonNull(redisTemplate.keys(Const.CARD_USER_VIEW_KEY_PREFIX + "*"))) {
             redisTemplate.delete(key);
         }
-        redisTemplate.delete(CARD_VIEW_RANKING_KEY);
+        redisTemplate.delete(Const.CARD_VIEW_RANKING_KEY);
     }
 }
