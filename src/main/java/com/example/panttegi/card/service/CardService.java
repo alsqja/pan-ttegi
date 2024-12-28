@@ -3,8 +3,8 @@ package com.example.panttegi.card.service;
 import com.example.panttegi.card.dto.CardResponseDto;
 import com.example.panttegi.card.entity.Card;
 import com.example.panttegi.card.repository.CardRepository;
+import com.example.panttegi.file.entity.File;
 import com.example.panttegi.file.repository.FileRepository;
-import com.example.panttegi.file.repository.entity.File;
 import com.example.panttegi.list.entity.BoardList;
 import com.example.panttegi.user.entity.User;
 import com.example.panttegi.user.repository.UserRepository;
@@ -65,7 +65,7 @@ public class CardService {
 
     // 카드 수정 (리스트 머지하면 수정, 포지션도)
     @Transactional
-    public CardResponseDto updateCard (
+    public CardResponseDto updateCard(
             Long cardId, String title, String description, int position, LocalDateTime endAt,
             String email, Long managerId, Long listId, List<Long> fileIds
     ) {
