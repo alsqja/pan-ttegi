@@ -2,7 +2,7 @@ package com.example.panttegi.card.entity;
 
 import com.example.panttegi.comment.entity.Comment;
 import com.example.panttegi.common.BaseEntity;
-import com.example.panttegi.file.repository.entity.File;
+import com.example.panttegi.file.entity.File;
 import com.example.panttegi.list.entity.BoardList;
 import com.example.panttegi.user.entity.User;
 import jakarta.persistence.*;

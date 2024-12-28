@@ -7,14 +7,11 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class ListRequestDto {
+public class CreateListRequestDto {
 
     @NotNull(message = "BAD_INPUT")
     private final Long boardId;
 
     @NotBlank(message = "BAD_INPUT")
     private final String title;
-
-    @NotNull(message = "BAD_INPUT")
-    private final Integer targetIndex;
 }
