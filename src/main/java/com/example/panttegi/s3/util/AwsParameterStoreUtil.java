@@ -1,4 +1,4 @@
-package com.example.panttegi.util;
+package com.example.panttegi.s3.util;
 
 import software.amazon.awssdk.services.ssm.SsmClient;
 import software.amazon.awssdk.services.ssm.model.GetParameterRequest;

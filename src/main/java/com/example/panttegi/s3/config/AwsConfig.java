@@ -1,6 +1,6 @@
-package com.example.panttegi.config;
+package com.example.panttegi.s3.config;
 
-import com.example.panttegi.util.AwsParameterStoreUtil;
+import com.example.panttegi.s3.util.AwsParameterStoreUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;

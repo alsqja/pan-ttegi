@@ -1,4 +1,4 @@
-package com.example.panttegi.util;
+package com.example.panttegi.s3.util;
 
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
