@@ -13,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/files")
+@RequestMapping("/api/workspaces/{workspaceId}/files")
 @RequiredArgsConstructor
 public class FileController {
 
