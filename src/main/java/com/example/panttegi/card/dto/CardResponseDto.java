@@ -2,7 +2,7 @@ package com.example.panttegi.card.dto;
 
 import com.example.panttegi.card.entity.Card;
 import com.example.panttegi.common.BaseDtoDataType;
-import com.example.panttegi.file.repository.entity.File;
+import com.example.panttegi.file.entity.File;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -39,7 +39,6 @@ public class CardResponseDto implements BaseDtoDataType {
         this.updatedAt = card.getUpdatedAt();
         this.files = card.getFiles();
     }
-
 
 
 }
