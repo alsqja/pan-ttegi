@@ -23,13 +23,9 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Set up environment variables
+      - name: Run Gradle Tests
         env:
           AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
-        run: |
-          echo "Environment variables set for testing"
-
-      - name: Run Gradle Tests
         run: |
           ./gradlew clean test
