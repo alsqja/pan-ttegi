@@ -30,17 +30,6 @@ jobs:
     needs: docker-build-and-push
     runs-on: ubuntu-latest
     # https://github.com/marketplace/actions/ssh-remote-commands
-
-    steps:
-      - name: Upload compose
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
-          key: ${{ secrets.EC2_KEY }}
-          source: ./docker-compose.yml
-          target: /home/ubuntu/PAN-TTEGI/docker-compose.yml
-
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v1.2.0
         with:
