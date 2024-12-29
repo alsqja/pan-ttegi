@@ -38,6 +38,7 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_KEY }}
           script: |
+            sudo docker pull alsqja2626/pan-ttegi:latest
             sudo docker-compose down
             sudo docker-compose pull
             sudo docker-compose up
