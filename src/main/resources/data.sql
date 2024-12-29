@@ -1,4 +1,4 @@
-ALTER DATABASE pan-ttegi CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+ALTER DATABASE `pan-ttegi` CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 
 INSERT INTO user (email, password, name, profile_url, role, deleted_at, created_at, updated_at)
 VALUES ('email1@email.com', 'password', 'name1', 'https://ca.slack-edge.com/T06B9PCLY1E-U07KRNHKXUM-4ddfb9e4780d-512',
