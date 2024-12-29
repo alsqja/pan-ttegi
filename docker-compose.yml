@@ -17,16 +17,16 @@ services:
     networks:
       - pan-net
 
-  db:
-    image: mysql:latest
-    container_name: mysql-container
-    environment:
-      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
-      MYSQL_DATABASE: pan_ttegi
-    ports:
-      - "3306:3306"
-    networks:
-      - pan-net
+    db:
+      image: mysql:latest
+      container_name: mysql-container
+      environment:
+        MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
+        MYSQL_DATABASE: pan_ttegi
+      ports:
+        - "3306:3306"
+      networks:
+        - pan-net
 
   redis:
     image: redis:latest
