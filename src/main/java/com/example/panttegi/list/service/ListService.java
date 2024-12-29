@@ -56,6 +56,7 @@ public class ListService {
         String lockKey = "updateList:lock" + listId;
 
         Boolean lockAcquired = redisTemplate.opsForValue().setIfAbsent(lockKey, "locked", Const.LOCK_EXPIRATION_TIME, TimeUnit.MILLISECONDS);
+        System.out.println("-----------------------------Lock Acquired: " + lockAcquired);
 
         if (Boolean.FALSE.equals(lockAcquired)) {
             throw new CustomException(ErrorCode.CONCURRENCY_CONFLICT);
@@ -65,6 +66,7 @@ public class ListService {
             BoardList targetList = listRepository.findByIdOrElseThrow(listId);
 
             if (!targetList.getBoard().getWorkspace().getId().equals(workspaceId)) {
+                redisTemplate.delete(lockKey);
                 throw new CustomException(ErrorCode.BAD_REQUEST);
             }
 
@@ -72,6 +74,7 @@ public class ListService {
             lists.sort(Comparator.comparing(BoardList::getPosition));
 
             if (targetIndex < 0 || targetIndex > lists.size()) {
+                redisTemplate.delete(lockKey);
                 throw new CustomException(ErrorCode.BAD_REQUEST);
             }
 
