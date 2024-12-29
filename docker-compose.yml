@@ -4,9 +4,8 @@ services:
   app:
     image: alsqja2626/pan-ttegi:latest
     container_name: app-container
-    restart: always
-    env_file:
-      - /home/ubuntu/.env
+    #    env_file:
+    #      - /home/ubuntu/.env
     environment:
       - AWS_ACCESS_KEY=${AWS_ACCESS_KEY}
       - AWS_SECRET_KEY=${AWS_SECRET_KEY}
@@ -14,21 +13,29 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     networks:
       - pan-net
 
   db:
     image: mysql:latest
     container_name: mysql-container
-    env_file:
-      - /home/ubuntu/.env
+    #    env_file:
+    #      - /home/ubuntu/.env
     environment:
       MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
       MYSQL_DATABASE: pan_ttegi
     ports:
       - "3306:3306"
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "--silent" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     networks:
       - pan-net
 
@@ -37,6 +44,11 @@ services:
     container_name: redis-container
     ports:
       - "6379:6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - pan-net
 
