@@ -38,11 +38,8 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_KEY }}
           script: |
-            CONTAINER_ID=$(sudo docker ps -q --filter "publish=8080-8080")
-            if [ ! -z "$CONTAINER_ID" ]; then
-              sudo docker stop $CONTAINER_ID
-              sudo docker rm $CONTAINER_ID
-            fi
-            sudo docker pull alsqja2626/pan-ttegi:latest
-            sudo docker run -d -p 8080:8080 \
-                alsqja2626/pan-ttegi:latest
+            cd /home/ubuntu
+            wget -O docker-compose.yml https://raw.githubusercontent.com/alsqja/pan-ttegi/test/cd/docker-compose.yml
+            sudo docker-compose down
+            sudo docker-compose pull
+            sudo docker-compose up -d
