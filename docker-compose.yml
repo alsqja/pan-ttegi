@@ -5,6 +5,8 @@ services:
     image: alsqja2626/pan-ttegi:latest
     container_name: app-container
     restart: always
+    env_file:
+      - /home/ubuntu/.env
     environment:
       - AWS_ACCESS_KEY=${AWS_ACCESS_KEY}
       - AWS_SECRET_KEY=${AWS_SECRET_KEY}
@@ -20,8 +22,10 @@ services:
   db:
     image: mysql:latest
     container_name: mysql-container
+    env_file:
+      - /home/ubuntu/.env
     environment:
-      MYSQL_ROOT_PASSWORD: 2626
+      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
       MYSQL_DATABASE: pan_ttegi
     ports:
       - "3306:3306"
