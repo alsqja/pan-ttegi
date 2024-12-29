@@ -1,10 +1,12 @@
 package com.example.panttegi.card.controller;
 
+import com.example.panttegi.card.dto.CardRankingResponseDto;
+import com.example.panttegi.card.dto.CardResponseDto;
 import com.example.panttegi.card.dto.PatchCardRequestDto;
 import com.example.panttegi.card.dto.PostCardRequestDto;
-import com.example.panttegi.card.dto.CardResponseDto;
 import com.example.panttegi.card.dto.SearchCardResponseDto;
 import com.example.panttegi.card.service.CardService;
+import com.example.panttegi.common.CommonListResDto;
 import com.example.panttegi.common.CommonResDto;
 import com.example.panttegi.error.errorcode.ErrorCode;
 import com.example.panttegi.error.exception.CustomException;
@@ -14,7 +16,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Objects;
@@ -42,18 +52,27 @@ public class CardController {
                 postCardRequestDto.getManagerId(),
                 postCardRequestDto.getListId(),
                 postCardRequestDto.getFileIds()
-                );
+        );
 
         return new ResponseEntity<>(new CommonResDto<>("카드 생성 완료", card), HttpStatus.CREATED);
+    }
+
+    @GetMapping("/ranking")
+    public ResponseEntity<CommonListResDto<CardRankingResponseDto>> getCardRanking(@RequestParam(defaultValue = "10") int limit) {
+
+        List<CardRankingResponseDto> rankings = cardService.getCardRanking(limit);
+
+        return new ResponseEntity<>(new CommonListResDto<>("카드 랭킹 조회 완료", rankings), HttpStatus.OK);
     }
 
     // 카드 단일 조회
     @GetMapping("/{cardId}")
     public ResponseEntity<CommonResDto<CardResponseDto>> getCard(
-            @PathVariable Long cardId
+            @PathVariable Long cardId,
+            Authentication authentication
     ) {
 
-        CardResponseDto card = cardService.getCard(cardId);
+        CardResponseDto card = cardService.getCard(cardId, authentication.getName());
 
         return new ResponseEntity<>(new CommonResDto<>("카드 단일 조회 완료", card), HttpStatus.OK);
     }
@@ -121,6 +140,4 @@ public class CardController {
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
-
 }
