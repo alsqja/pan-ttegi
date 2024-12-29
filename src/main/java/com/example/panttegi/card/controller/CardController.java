@@ -8,6 +8,8 @@ import com.example.panttegi.card.dto.SearchCardResponseDto;
 import com.example.panttegi.card.service.CardService;
 import com.example.panttegi.common.CommonListResDto;
 import com.example.panttegi.common.CommonResDto;
+import com.example.panttegi.error.errorcode.ErrorCode;
+import com.example.panttegi.error.exception.CustomException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/workspaces/{workspaceId}/cards")
@@ -42,7 +45,8 @@ public class CardController {
         CardResponseDto card = cardService.postCard(
                 postCardRequestDto.getTitle(),
                 postCardRequestDto.getDescription(),
-                postCardRequestDto.getPosition(),
+                postCardRequestDto.getBeforeCardId(),
+                postCardRequestDto.getAfterCardId(),
                 postCardRequestDto.getEndAt(),
                 authentication.getName(),
                 postCardRequestDto.getManagerId(),
@@ -95,24 +99,31 @@ public class CardController {
         return new ResponseEntity<>(new CommonResDto<>("카드 검색 완료", cards), HttpStatus.OK);
     }
 
-    // 카드 수정 (아직 미완)
+    // 카드 수정
     @PatchMapping("/{cardId}")
     public ResponseEntity<CommonResDto<CardResponseDto>> updateCard(
             @PathVariable Long cardId,
-            @Valid @RequestBody PatchCardRequestDto postCardRequestDto,
+            @Valid @RequestBody PatchCardRequestDto patchCardRequestDto,
             Authentication authentication
     ) {
 
+        if (patchCardRequestDto.getBeforeCardId().equals(cardId) ||
+                patchCardRequestDto.getAfterCardId().equals(cardId)
+        ) {
+            throw new CustomException(ErrorCode.BAD_INPUT);
+        }
+
         CardResponseDto card = cardService.updateCard(
                 cardId,
-                postCardRequestDto.getTitle(),
-                postCardRequestDto.getDescription(),
-                postCardRequestDto.getPosition(),
-                postCardRequestDto.getEndAt(),
+                patchCardRequestDto.getTitle(),
+                patchCardRequestDto.getDescription(),
+                patchCardRequestDto.getBeforeCardId(),
+                patchCardRequestDto.getAfterCardId(),
+                patchCardRequestDto.getEndAt(),
                 authentication.getName(),
-                postCardRequestDto.getManagerId(),
-                postCardRequestDto.getListId(),
-                postCardRequestDto.getFileIds()
+                patchCardRequestDto.getManagerId(),
+                patchCardRequestDto.getListId(),
+                patchCardRequestDto.getFileIds()
         );
 
         return new ResponseEntity<>(new CommonResDto<>("카드 수정 완료", card), HttpStatus.OK);

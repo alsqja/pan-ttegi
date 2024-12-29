@@ -33,4 +33,6 @@ public interface CardRepository extends JpaRepository<Card, Long> {
             @Param("description") String description,
             @Param("managerName") String managerName,
             Pageable pageable);
+
+    Card findTopByOrderByPositionDesc();
 }

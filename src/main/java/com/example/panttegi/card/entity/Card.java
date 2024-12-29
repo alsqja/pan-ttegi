@@ -30,7 +30,7 @@ public class Card extends BaseEntity {
     private String description;
 
     @Column(name = "position", nullable = false)
-    private int position;
+    private String position;
 
     @Column(name = "end_at", nullable = false)
     private LocalDateTime endAt;
@@ -53,7 +53,7 @@ public class Card extends BaseEntity {
     @OneToMany(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<File> files = new ArrayList<>();
 
-    public Card(String title, String description, int position, LocalDateTime endAt, User user, User manager, BoardList boardList, List<File> files) {
+    public Card(String title, String description, String position, LocalDateTime endAt, User user, User manager, BoardList boardList, List<File> files) {
         this.title = title;
         this.description = description;
         this.position = position;
@@ -65,31 +65,44 @@ public class Card extends BaseEntity {
     }
 
     public void updateTitle(String title) {
-        this.title = title;
+        if (title != null) {
+            this.title = title;
+        }
     }
 
     public void updateDescription(String description) {
-        this.description = description;
+        if (description != null) {
+            this.description = description;
+        }
     }
 
-    public void updatePosition(int position) {
+    public void updatePosition(String position) {
         this.position = position;
     }
 
     public void updateEndAt(LocalDateTime endAt) {
-        this.endAt = endAt;
+        if (endAt != null) {
+            this.endAt = endAt;
+        }
     }
 
     public void updateManager(User manager) {
-        this.manager = manager;
+        if (manager != null) {
+            this.manager = manager;
+        }
     }
 
     public void updateBoardList(BoardList boardList) {
-        this.boardList = boardList;
+        if (boardList != null) {
+            this.boardList = boardList;
+        }
     }
 
     public void updateFiles(List<File> files) {
-        this.files = files;
+        if (files != null) {
+            this.files.clear();
+            this.files.addAll(files);
+        }
     }
 
 
