@@ -18,7 +18,7 @@ services:
       - pan-net
 
   db:
-    image: mysql:latest
+    image: mysql:9.1
     container_name: mysql-container
     environment:
       MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
