@@ -25,10 +25,5 @@ COPY --from=builder /apps/build/libs/*-SNAPSHOT.jar /apps/app.jar
 # 애플리케이션이 사용할 포트 노출
 EXPOSE 8080
 
-# 환경 변수 설정
-ENV AWS_ACCESS_KEY=${AWS_ACCESS_KEY}
-ENV AWS_SECRET_KEY=${AWS_SECRET_KEY}
-ENV DATABASE_PASSWORD=${DATABASE_PASSWORD}
-
 # 애플리케이션을 실행하기 위한 엔트리포인트 정의
 ENTRYPOINT ["java", "-jar", "/apps/app.jar"]
