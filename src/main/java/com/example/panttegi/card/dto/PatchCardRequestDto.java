@@ -9,22 +9,23 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
-@RequiredArgsConstructor
 public class PatchCardRequestDto {
 
-    private final String title;
+    private String title;
 
-    private final String description;
+    private String description;
 
-    private final int position;
+    private Long beforeCardId;
 
-    private final LocalDateTime endAt;
+    private Long afterCardId;
 
-    private final Long managerId;
+    private LocalDateTime endAt;
 
-    private final Long listId;
+    private Long managerId;
 
-    private final List<Long> fileIds;
+    private Long listId;
+
+    private List<Long> fileIds;
 
 
 }

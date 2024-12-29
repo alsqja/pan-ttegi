@@ -13,7 +13,7 @@ public class BoardDetailCardDto {
     private final Long id;
     private final String title;
     private final String description;
-    private final int position;
+    private final String position;
     private final LocalDateTime endAt;
     private final String managerName;
     private final Long managerId;

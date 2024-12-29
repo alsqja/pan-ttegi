@@ -34,13 +34,17 @@ INSERT INTO list (user_id, board_id, title, position, created_at, updated_at)
 VALUES (1, 1, 'title2', 2, CURRENT_DATE, CURRENT_DATE);
 
 INSERT INTO card (user_id, manager_id, list_id, title, description, position, end_at, created_at, updated_at)
-VALUES (2, 2, 1, 'title1', 'description1', 1, CURRENT_DATE, CURRENT_DATE, CURRENT_DATE);
+VALUES (2, 2, 1, 'title1', 'description1', "aaaa", CURRENT_DATE, CURRENT_DATE, CURRENT_DATE);
 INSERT INTO card (user_id, manager_id, list_id, title, description, position, end_at, created_at, updated_at)
-VALUES (2, 1, 1, 'title2', 'description1', 2, CURRENT_DATE, CURRENT_DATE, CURRENT_DATE);
+VALUES (2, 1, 1, 'title2', 'description1', "bbbb", CURRENT_DATE, CURRENT_DATE, CURRENT_DATE);
 INSERT INTO card (user_id, manager_id, list_id, title, description, position, end_at, created_at, updated_at)
-VALUES (1, 1, 2, 'title3', 'description3', 3, CURRENT_DATE, CURRENT_DATE, CURRENT_DATE);
+VALUES (1, 1, 2, 'title3', 'description3', "cccc", CURRENT_DATE, CURRENT_DATE, CURRENT_DATE);
 
 INSERT INTO comment (user_id, card_id, content, created_at, updated_at)
 VALUES (3, 1, 'content1', CURRENT_DATE, CURRENT_DATE);
 INSERT INTO comment (user_id, card_id, content, created_at, updated_at)
 VALUES (3, 2, 'content2', CURRENT_DATE, CURRENT_DATE);
+
+INSERT INTO file (url, user_id, card_id, created_at)
+VALUES ("3", 2, 1, CURRENT_DATE);
+
