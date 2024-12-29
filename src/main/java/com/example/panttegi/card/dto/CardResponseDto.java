@@ -37,8 +37,8 @@ public class CardResponseDto implements BaseDtoDataType {
         this.listId = card.getBoardList().getId();
         this.createdAt = card.getCreatedAt();
         this.updatedAt = card.getUpdatedAt();
-        List<File> files1 = card.getFiles();
-        for (File file : files1) {
+        List<File> getFiles = card.getFiles();
+        for (File file : getFiles) {
             this.files.add(new FileDto(file));
         }
     }
