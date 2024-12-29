@@ -1,8 +1,9 @@
 package com.example.panttegi.list.controller;
 
 import com.example.panttegi.common.CommonResDto;
-import com.example.panttegi.list.dto.ListRequestDto;
+import com.example.panttegi.list.dto.CreateListRequestDto;
 import com.example.panttegi.list.dto.ListResponseDto;
+import com.example.panttegi.list.dto.UpdateListRequestDto;
 import com.example.panttegi.list.service.ListService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,13 +22,13 @@ public class ListController {
     @PostMapping
     public ResponseEntity<CommonResDto<ListResponseDto>> createList(
             @PathVariable Long workspaceId,
-            @Valid @RequestBody ListRequestDto listRequestDto,
+            @Valid @RequestBody CreateListRequestDto createListRequestDto,
             Authentication authentication
     ) {
         ListResponseDto response = listService.createList(
                 workspaceId,
-                listRequestDto.getBoardId(),
-                listRequestDto.getTitle(),
+                createListRequestDto.getBoardId(),
+                createListRequestDto.getTitle(),
                 authentication.getName()
         );
 
@@ -38,14 +39,14 @@ public class ListController {
     public ResponseEntity<CommonResDto<ListResponseDto>> updateList(
             @PathVariable Long workspaceId,
             @PathVariable Long listId,
-            @Valid @RequestBody ListRequestDto listRequestDto,
+            @Valid @RequestBody UpdateListRequestDto updateListRequestDto,
             Authentication authentication
     ) {
         ListResponseDto response = listService.updateList(
                 workspaceId,
                 listId,
-                listRequestDto.getTitle(),
-                listRequestDto.getTargetIndex(),
+                updateListRequestDto.getTitle(),
+                updateListRequestDto.getTargetIndex(),
                 authentication.getName()
         );
 
