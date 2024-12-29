@@ -18,7 +18,7 @@ services:
       - pan-net
 
   db:
-    image: mysql:9.1
+    image: mysql:latest
     container_name: mysql-container
     environment:
       MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
@@ -27,6 +27,8 @@ services:
       - "3306:3306"
     networks:
       - pan-net
+    volumes:
+      - mysql-data:/var/lib/mysql
 
   redis:
     image: redis:latest
@@ -39,3 +41,7 @@ services:
 networks:
   pan-net:
     driver: bridge
+
+volumes:
+  mysql-data:
+    driver: local
