@@ -17,14 +17,14 @@ public class CardResponseDto implements BaseDtoDataType {
     private final Long id;
     private final String title;
     private final String description;
-    private final int position;
+    private final String position;
     private final LocalDateTime endAt;
     private final Long userId;
     private final Long managerId;
-    private final Long BoardListId;
+    private final Long listId;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
-    private List<File> files = new ArrayList<>();
+    private List<FileDto> files = new ArrayList<>();
 
     public CardResponseDto(Card card) {
         this.id = card.getId();
@@ -34,10 +34,13 @@ public class CardResponseDto implements BaseDtoDataType {
         this.endAt = card.getEndAt();
         this.userId = card.getUser().getId();
         this.managerId = card.getManager().getId();
-        this.BoardListId = card.getBoardList().getId();
+        this.listId = card.getBoardList().getId();
         this.createdAt = card.getCreatedAt();
         this.updatedAt = card.getUpdatedAt();
-        this.files = card.getFiles();
+        List<File> getFiles = card.getFiles();
+        for (File file : getFiles) {
+            this.files.add(new FileDto(file));
+        }
     }
 
 

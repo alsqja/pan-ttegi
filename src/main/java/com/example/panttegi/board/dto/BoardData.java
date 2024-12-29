@@ -23,7 +23,7 @@ public class BoardData {
     private Long cardId;
     private String cardTitle;
     private String cardDescription;
-    private int cardPosition;
+    private String cardPosition;
     private LocalDateTime cardEndAt;
     private String managerName;
     private Long managerId;

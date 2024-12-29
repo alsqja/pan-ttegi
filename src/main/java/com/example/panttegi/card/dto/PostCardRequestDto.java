@@ -19,7 +19,10 @@ public class PostCardRequestDto {
     private final String description;
 
     @NotNull(message = "BAD_INPUT")
-    private final int position;
+    private final Long beforeCardId;
+
+    @NotNull(message = "BAD_INPUT")
+    private final Long afterCardId;
 
     private final LocalDateTime endAt;
 
