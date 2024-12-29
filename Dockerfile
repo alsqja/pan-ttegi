@@ -6,6 +6,7 @@ WORKDIR /apps
 
 # 빌더 이미지에서 애플리케이션 빌드
 COPY . /apps
+COPY docker-compose.yml /apps/docker-compose.yml
 RUN gradle clean build -x test --no-daemon --parallel
 
 

@@ -2,7 +2,7 @@ name: docker multi-stage build
 
 on:
   push:
-    branches: [ develop ] # 해당 branch에 push 되었을 경우
+    branches: [ test/cd ] # 해당 branch에 push 되었을 경우
 
   # https://github.com/marketplace/actions/build-and-push-docker-images
 
@@ -30,7 +30,17 @@ jobs:
     needs: docker-build-and-push
     runs-on: ubuntu-latest
     # https://github.com/marketplace/actions/ssh-remote-commands
+
     steps:
+      #      - name: Upload compose
+      #        uses: appleboy/scp-action@v0.1.7
+      #        with:
+      #          host: ${{ secrets.EC2_HOST }}
+      #          username: ubuntu
+      #          key: ${{ secrets.EC2_KEY }}
+      #          source: ./docker-compose.yml
+      #          target: /PAN-TTEGI/docker-compose.yml
+
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v1.2.0
         with:
@@ -38,7 +48,10 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_KEY }}
           script: |
+            CONTAINER_ID=$(sudo docker ps -q --filter "publish=8080-8080")
+            if [ ! -z "$CONTAINER_ID" ]; then
+              sudo docker stop $CONTAINER_ID
+              sudo docker rm $CONTAINER_ID
+            fi
             sudo docker pull alsqja2626/pan-ttegi:latest
-            sudo docker-compose down
-            sudo docker-compose pull
-            sudo docker-compose up
+            docker-compose -f /apps/docker-compose.yml up -d
