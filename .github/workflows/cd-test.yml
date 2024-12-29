@@ -38,9 +38,9 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_KEY }}
           script: |
-            echo "AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }}" > /home/ubuntu/.env
-            echo "AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }}" >> /home/ubuntu/.env
-            echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> /home/ubuntu/.env
+            sudo echo "AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }}" > /home/ubuntu/.env
+            sudo echo "AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }}" >> /home/ubuntu/.env
+            sudo echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> /home/ubuntu/.env
             cd /home/ubuntu
             wget -O docker-compose.yml https://raw.githubusercontent.com/alsqja/pan-ttegi/test/cd/docker-compose.yml
             sudo docker-compose down
