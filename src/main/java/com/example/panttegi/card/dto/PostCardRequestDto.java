@@ -18,12 +18,6 @@ public class PostCardRequestDto {
     @NotBlank(message = "BAD_INPUT")
     private final String description;
 
-    @NotNull(message = "BAD_INPUT")
-    private final Long beforeCardId;
-
-    @NotNull(message = "BAD_INPUT")
-    private final Long afterCardId;
-
     private final LocalDateTime endAt;
 
     private final Long managerId;
