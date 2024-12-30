@@ -14,7 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "card")
+//@Table(name = "card")
+@Table(name = "card", indexes = {
+        @Index(name = "idx_title", columnList = "title"),
+        @Index(name = "idx_description", columnList = "description"),
+        @Index(name = "idx_title_description", columnList = "title, description")
+})
 @Getter
 @NoArgsConstructor
 public class Card extends BaseEntity {
@@ -52,6 +57,23 @@ public class Card extends BaseEntity {
 
     @OneToMany(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<File> files = new ArrayList<>();
+
+    public Card(String title, String description, String position, LocalDateTime endAt) {
+        this.title = title;
+        this.description = description;
+        this.position = position;
+        this.endAt = endAt;
+    }
+
+    public Card(String title, String description, String position, LocalDateTime endAt, User user, User manager, BoardList boardList) {
+        this.title = title;
+        this.description = description;
+        this.position = position;
+        this.endAt = endAt;
+        this.user = user;
+        this.manager = manager;
+        this.boardList = boardList;
+    }
 
     public Card(String title, String description, String position, LocalDateTime endAt, User user, User manager, BoardList boardList, List<File> files) {
         this.title = title;
