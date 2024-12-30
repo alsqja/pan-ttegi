@@ -24,7 +24,7 @@ Lombok: 코드 간소화
 ---
 
 ## **시연 영상**
-[시연 영상 URL]()
+[시연 영상 URL](https://www.youtube.com/watch?v=Wauids7DzfU)
 
 ## 팀원
 
