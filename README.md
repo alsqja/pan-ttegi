@@ -4,10 +4,15 @@
 ---
 ## Tech Stack
 JAVA: JDK 17
+
 Spring Boot: 3.3.5
+
 MySQL: Ver 8+
+
 Gradle: 빌드 및 의존성 관리
+
 IntelliJ IDEA: 통합 개발 환경(IDE)
+
 Lombok: 코드 간소화
 
 ---
