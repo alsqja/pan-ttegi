@@ -42,7 +42,7 @@ public interface CardRepository extends JpaRepository<Card, Long> {
                 SELECT c.position FROM Card c
                 JOIN c.boardList l
                 WHERE l.id = :listId
-                ORDER BY c.position
+                ORDER BY c.position DESC
             """)
     List<String> findLastPosition(Long listId);
 }
