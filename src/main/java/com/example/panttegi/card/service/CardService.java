@@ -14,6 +14,8 @@ import com.example.panttegi.list.repository.ListRepository;
 import com.example.panttegi.user.entity.User;
 import com.example.panttegi.user.repository.UserRepository;
 import com.example.panttegi.util.LexoRank;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -42,6 +44,7 @@ public class CardService {
 
     private final StringRedisTemplate redisTemplate;
     private final ZSetOperations<String, String> zSetOperations;
+    private final ObjectMapper objectMapper;
 
     // 카드 생성
     public CardResponseDto postCard(
@@ -80,8 +83,8 @@ public class CardService {
     }
 
     // 카드 랭킹 조회
-    public List<CardRankingResponseDto> getCardRanking(int limit) {
-        Set<ZSetOperations.TypedTuple<String>> rankingSet = zSetOperations.reverseRangeWithScores(Const.CARD_VIEW_RANKING_KEY, 0, limit - 1);
+    public List<CardRankingResponseDto> getCardRanking() {
+        Set<ZSetOperations.TypedTuple<String>> rankingSet = zSetOperations.reverseRangeWithScores(Const.CARD_VIEW_RANKING_KEY, 0, 9);
 
         if (rankingSet == null || rankingSet.isEmpty()) {
             return List.of();
@@ -89,9 +92,24 @@ public class CardService {
 
         return rankingSet.stream().map(tuple -> {
             Long cardId = Long.parseLong(Objects.requireNonNull(tuple.getValue()));
-            Card card = cardRepository.findByIdOrElseThrow(cardId);
             Double viewCount = Objects.requireNonNull(tuple.getScore());
             Long rank = zSetOperations.reverseRank(Const.CARD_VIEW_RANKING_KEY, tuple.getValue()) + 1;
+
+            String cardKey = Const.CARD_DATA_KEY_PREFIX + cardId;
+            String cardJson = redisTemplate.opsForValue().get(cardKey);
+            Card card = null;
+
+            if (cardJson != null) {
+                try {
+                    card = objectMapper.readValue(cardJson, Card.class);
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (card == null) {
+                return new CardRankingResponseDto(null, viewCount, rank);
+            }
 
             return new CardRankingResponseDto(new CardResponseDto(card), viewCount, rank);
         }).toList();
@@ -194,5 +212,30 @@ public class CardService {
             redisTemplate.delete(key);
         }
         redisTemplate.delete(Const.CARD_VIEW_RANKING_KEY);
+    }
+
+    @Scheduled(cron = "0 0 * * * ?")
+    public void cacheTopRankingCards() {
+
+        int limit = 10;
+        Set<ZSetOperations.TypedTuple<String>> rankingSet = zSetOperations.reverseRangeWithScores(Const.CARD_VIEW_RANKING_KEY, 0, limit - 1);
+
+        if (rankingSet == null || rankingSet.isEmpty()) {
+            return;
+        }
+
+        List<Long> cardIds = rankingSet.stream().map(t -> Long.parseLong(Objects.requireNonNull(t.getValue()))).toList();
+
+        List<Card> cards = cardRepository.findAllById(cardIds);
+
+        for (Card card : cards) {
+            String cardKey = Const.CARD_DATA_KEY_PREFIX + card.getId();
+            try {
+                String cardJson = objectMapper.writeValueAsString(card);
+                redisTemplate.opsForValue().set(cardKey, cardJson, 1, TimeUnit.HOURS);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
