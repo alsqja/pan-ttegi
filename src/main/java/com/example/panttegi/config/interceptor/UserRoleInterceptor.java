@@ -8,11 +8,12 @@ import com.example.panttegi.util.JwtProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import static com.example.panttegi.config.interceptor.InterceptorUtils.extractPathVariable;
-import static com.example.panttegi.config.interceptor.InterceptorUtils.getTokenFromRequest;
 
 @Component
 @RequiredArgsConstructor
@@ -24,13 +25,9 @@ public class UserRoleInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handleer) throws Exception {
 
-        String token = getTokenFromRequest(request);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (!jwtProvider.validToken(token)) {
-            throw new CustomException(ErrorCode.EXPIRED_TOKEN);
-        }
-
-        String email = jwtProvider.getUsername(token);
+        String email = authentication.getName();
         Long workspaceId = Long.parseLong(extractPathVariable(request));
 
         Member member = memberRepository.findByEmailAndWorkspaceId(email, workspaceId);
