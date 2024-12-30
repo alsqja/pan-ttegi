@@ -1,4 +1,4 @@
-package com.example.panttegi.util;
+package com.example.panttegi.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

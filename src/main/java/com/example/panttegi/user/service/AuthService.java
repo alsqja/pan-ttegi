@@ -1,5 +1,6 @@
 package com.example.panttegi.user.service;
 
+import com.example.panttegi.enums.AuthenticationScheme;
 import com.example.panttegi.error.errorcode.ErrorCode;
 import com.example.panttegi.error.exception.CustomException;
 import com.example.panttegi.user.dto.LoginResDto;
@@ -8,7 +9,6 @@ import com.example.panttegi.user.dto.UserResponseDto;
 import com.example.panttegi.user.entity.User;
 import com.example.panttegi.user.repository.RefreshTokenRepository;
 import com.example.panttegi.user.repository.UserRepository;
-import com.example.panttegi.util.AuthenticationScheme;
 import com.example.panttegi.util.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -68,7 +68,7 @@ public class AuthService {
 
         String email = jwtProvider.getUsername(refreshToken);
         String savedRequestToken = refreshTokenRepository.getRefreshToken(email);
-        
+
         if (!refreshToken.equals(savedRequestToken)) {
             throw new CustomException(ErrorCode.EXPIRED_TOKEN);
         }
