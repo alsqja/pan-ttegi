@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  app:
+    image: alsqja2626/pan-ttegi:latest
+    container_name: app-container
+    environment:
+      - AWS_ACCESS_KEY=${AWS_ACCESS_KEY}
+      - AWS_SECRET_KEY=${AWS_SECRET_KEY}
+      - DATABASE_HOST=${DATABASE_HOST}
+      - DATABASE_PORT=3306
+      - DATABASE_NAME=pan_ttegi
+      - DATABASE_USERNAME=admin
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - redis
+    networks:
+      - pan-net
+
+  redis:
+    image: redis:latest
+    container_name: redis-container
+    ports:
+      - "6379:6379"
+    networks:
+      - pan-net
+
+networks:
+  pan-net:
+    driver: bridge
