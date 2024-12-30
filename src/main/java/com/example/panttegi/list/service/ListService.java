@@ -43,19 +43,12 @@ public class ListService {
             throw new CustomException(ErrorCode.BAD_REQUEST);
         }
 
-        List<BoardList> lists = listRepository.findByBoardId(boardId);
-        lists.sort(Comparator.comparing(BoardList::getPosition));
+        Long listCount = listRepository.countByBoardId(boardId);
 
-        BigDecimal newPosition;
-
-        if (lists.isEmpty()) {
-            newPosition = BigDecimal.valueOf(100);
-        } else {
-            BigDecimal lastPosition = lists.get(lists.size() - 1).getPosition();
-            newPosition = lastPosition.add(BigDecimal.valueOf(100));
-        }
+        BigDecimal newPosition = BigDecimal.valueOf((listCount + 1) * 100);
 
         BoardList boardList = new BoardList(title, newPosition, user, board);
+
         return new ListResponseDto(listRepository.save(boardList));
     }
 
@@ -80,6 +73,8 @@ public class ListService {
 
             List<BoardList> lists = listRepository.findByBoardId(targetList.getBoard().getId());
             lists.sort(Comparator.comparing(BoardList::getPosition));
+
+            targetIndex -= 1;
 
             if (targetIndex < 0 || targetIndex > lists.size()) {
                 redisTemplate.delete(lockKey);
@@ -117,7 +112,7 @@ public class ListService {
         }
 
         if (targetIndex == 0) {
-            BigDecimal newPosition = lists.get(0).getPosition().subtract(BigDecimal.valueOf(100));
+            BigDecimal newPosition = lists.get(0).getPosition().divide(BigDecimal.valueOf(2));
             if (newPosition.compareTo(BigDecimal.ZERO) <= 0) {
                 throw new CustomException(ErrorCode.BAD_REQUEST);
             }
