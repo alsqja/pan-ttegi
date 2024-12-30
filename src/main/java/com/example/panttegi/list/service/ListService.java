@@ -17,6 +17,8 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -44,9 +46,16 @@ public class ListService {
         List<BoardList> lists = listRepository.findByBoardId(boardId);
         lists.sort(Comparator.comparing(BoardList::getPosition));
 
-        Double lastPosition = lists.isEmpty() ? 1.0 : lists.get(lists.size() - 1).getPosition() + 1.0;
+        BigDecimal newPosition;
 
-        BoardList boardList = new BoardList(title, lastPosition, user, board);
+        if (lists.isEmpty()) {
+            newPosition = BigDecimal.valueOf(100);
+        } else {
+            BigDecimal lastPosition = lists.get(lists.size() - 1).getPosition();
+            newPosition = lastPosition.add(BigDecimal.valueOf(100));
+        }
+
+        BoardList boardList = new BoardList(title, newPosition, user, board);
         return new ListResponseDto(listRepository.save(boardList));
     }
 
@@ -73,7 +82,9 @@ public class ListService {
             List<BoardList> lists = listRepository.findByBoardId(targetList.getBoard().getId());
             lists.sort(Comparator.comparing(BoardList::getPosition));
 
-            if (targetIndex < 0 || targetIndex > lists.size()) {
+            targetIndex -= 1;
+
+            if (targetIndex < 0 || targetIndex >= lists.size() + 1) {
                 redisTemplate.delete(lockKey);
                 throw new CustomException(ErrorCode.BAD_REQUEST);
             }
@@ -82,7 +93,7 @@ public class ListService {
                 targetList.updateTitle(title);
             }
 
-            Double newPosition = calculateNewPosition(lists, targetIndex);
+            BigDecimal newPosition = calculateNewPosition(lists, targetIndex);
             targetList.updatePosition(newPosition);
 
             return new ListResponseDto(targetList);
@@ -102,22 +113,23 @@ public class ListService {
         listRepository.delete(boardList);
     }
 
-    private Double calculateNewPosition(List<BoardList> lists, int targetIndex) {
+    private BigDecimal calculateNewPosition(List<BoardList> lists, int targetIndex) {
+
         if (lists.isEmpty()) {
-            return 1.0;
+            return BigDecimal.valueOf(100);
         }
 
         if (targetIndex == 0) {
-            return lists.get(0).getPosition() / 2.0;
+            return lists.get(0).getPosition().subtract(BigDecimal.valueOf(100));
         }
 
         if (targetIndex >= lists.size()) {
-            return lists.get(lists.size() - 1).getPosition() + 1.0;
+            return lists.get(lists.size() - 1).getPosition().add(BigDecimal.valueOf(100));
         }
 
-        Double prevPosition = lists.get(targetIndex - 1).getPosition();
-        Double nextPosition = lists.get(targetIndex).getPosition();
+        BigDecimal prevPosition = lists.get(targetIndex - 1).getPosition();
+        BigDecimal nextPosition = lists.get(targetIndex).getPosition();
 
-        return (prevPosition + nextPosition) / 2.0;
+        return prevPosition.add(nextPosition).divide(BigDecimal.valueOf(2), 6, RoundingMode.HALF_UP);
     }
 }
