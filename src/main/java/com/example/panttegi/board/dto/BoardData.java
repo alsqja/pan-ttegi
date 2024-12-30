@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -18,7 +19,7 @@ public class BoardData {
 
     private Long listId;
     private String listTitle;
-    private Double listPosition;
+    private BigDecimal listPosition;
 
     private Long cardId;
     private String cardTitle;
