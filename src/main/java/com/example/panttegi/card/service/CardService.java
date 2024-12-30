@@ -217,6 +217,7 @@ public class CardService {
     @Scheduled(cron = "0 0 * * * ?")
     public void cacheTopRankingCards() {
 
+        System.out.println("______________________________ start _________________________________");
         int limit = 10;
         Set<ZSetOperations.TypedTuple<String>> rankingSet = zSetOperations.reverseRangeWithScores(Const.CARD_VIEW_RANKING_KEY, 0, limit - 1);
 

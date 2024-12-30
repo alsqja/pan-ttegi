@@ -4,6 +4,7 @@ import com.example.panttegi.board.entity.Board;
 import com.example.panttegi.common.BaseEntity;
 import com.example.panttegi.member.entity.Member;
 import com.example.panttegi.user.entity.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -46,9 +47,11 @@ public class Workspace extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "workspace", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Member> members = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "workspace", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Board> boards = new ArrayList<>();
 
