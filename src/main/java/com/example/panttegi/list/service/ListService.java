@@ -56,7 +56,6 @@ public class ListService {
         String lockKey = "updateList:lock" + listId;
 
         Boolean lockAcquired = redisTemplate.opsForValue().setIfAbsent(lockKey, "locked", Const.LOCK_EXPIRATION_TIME, TimeUnit.MILLISECONDS);
-        System.out.println("-----------------------------Lock Acquired: " + lockAcquired);
 
         if (Boolean.FALSE.equals(lockAcquired)) {
             throw new CustomException(ErrorCode.CONCURRENCY_CONFLICT);
