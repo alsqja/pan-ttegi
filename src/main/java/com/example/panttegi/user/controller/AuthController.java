@@ -4,8 +4,10 @@ import com.example.panttegi.common.CommonResDto;
 import com.example.panttegi.user.dto.LoginReqDto;
 import com.example.panttegi.user.dto.LoginResDto;
 import com.example.panttegi.user.dto.SignupRequestDto;
+import com.example.panttegi.user.dto.TokenDto;
 import com.example.panttegi.user.dto.UserResponseDto;
 import com.example.panttegi.user.entity.User;
+import com.example.panttegi.user.repository.RefreshTokenRepository;
 import com.example.panttegi.user.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @PostMapping("/signup")
     public ResponseEntity<CommonResDto<UserResponseDto>> signup(
@@ -46,6 +49,14 @@ public class AuthController {
         return new ResponseEntity<>(new CommonResDto<>("로그인 완료", result), HttpStatus.OK);
     }
 
+    @PostMapping("/refresh")
+    public ResponseEntity<CommonResDto<TokenDto>> refreshAccessToken(@Valid @RequestBody TokenDto dto) {
+
+        TokenDto result = authService.refresh(dto.getAccessToken(), dto.getRefreshToken());
+
+        return new ResponseEntity<>(new CommonResDto<>("토큰 재발급 완료", result), HttpStatus.CREATED);
+    }
+
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(
             HttpServletRequest request,
@@ -55,6 +66,7 @@ public class AuthController {
 
         if (authentication != null && authentication.isAuthenticated()) {
             new SecurityContextLogoutHandler().logout(request, response, authentication);
+            refreshTokenRepository.deleteRefreshToken(authentication.getName());
         }
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

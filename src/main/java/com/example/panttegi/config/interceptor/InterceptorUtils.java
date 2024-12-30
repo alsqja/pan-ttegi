@@ -20,7 +20,7 @@ public class InterceptorUtils {
         return null;
     }
 
-    public static String extractPathVariable(HttpServletRequest request, String variableName) {
+    public static String extractPathVariable(HttpServletRequest request) {
         String path = request.getRequestURI();
         String[] pathSegments = path.split("/");
 
