@@ -17,7 +17,6 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.swing.text.Position;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Comparator;
@@ -83,9 +82,7 @@ public class ListService {
             List<BoardList> lists = listRepository.findByBoardId(targetList.getBoard().getId());
             lists.sort(Comparator.comparing(BoardList::getPosition));
 
-            targetIndex -= 1;
-
-            if (targetIndex < 0 || targetIndex >= lists.size() + 1) {
+            if (targetIndex < 0 || targetIndex > lists.size()) {
                 redisTemplate.delete(lockKey);
                 throw new CustomException(ErrorCode.BAD_REQUEST);
             }
@@ -126,15 +123,13 @@ public class ListService {
                 throw new CustomException(ErrorCode.BAD_REQUEST);
             }
             return newPosition;
-        }
-
-        if (targetIndex >= lists.size()) {
+        } else if (targetIndex >= lists.size()) {
             return lists.get(lists.size() - 1).getPosition().add(BigDecimal.valueOf(100));
+        } else {
+            BigDecimal prevPosition = lists.get(targetIndex - 1).getPosition();
+            BigDecimal nextPosition = lists.get(targetIndex).getPosition();
+
+            return prevPosition.add(nextPosition).divide(BigDecimal.valueOf(2), 6, RoundingMode.HALF_UP);
         }
-
-        BigDecimal prevPosition = lists.get(targetIndex - 1).getPosition();
-        BigDecimal nextPosition = lists.get(targetIndex).getPosition();
-
-        return prevPosition.add(nextPosition).divide(BigDecimal.valueOf(2), 6, RoundingMode.HALF_UP);
     }
 }
