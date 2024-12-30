@@ -17,6 +17,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.Position;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Comparator;
@@ -120,7 +121,11 @@ public class ListService {
         }
 
         if (targetIndex == 0) {
-            return lists.get(0).getPosition().subtract(BigDecimal.valueOf(100));
+            BigDecimal newPosition = lists.get(0).getPosition().subtract(BigDecimal.valueOf(100));
+            if (newPosition.compareTo(BigDecimal.ZERO) <= 0) {
+                throw new CustomException(ErrorCode.BAD_REQUEST);
+            }
+            return newPosition;
         }
 
         if (targetIndex >= lists.size()) {
