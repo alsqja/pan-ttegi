@@ -1,5 +1,6 @@
 package com.example.panttegi.util;
 
+import com.example.panttegi.user.dto.TokenDto;
 import com.example.panttegi.user.entity.User;
 import com.example.panttegi.user.repository.UserRepository;
 import io.jsonwebtoken.Claims;
@@ -40,9 +41,22 @@ public class JwtProvider {
 
     private final UserRepository userRepository;
 
-    public String generateToken(Authentication authentication) throws EntityNotFoundException {
-        String username = authentication.getName();
-        return this.generateTokenBy(username);
+    public TokenDto generateToken(Authentication authentication) throws EntityNotFoundException {
+
+        String email = authentication.getName();
+
+        String accessToken = this.generateTokenBy(email);
+        String refreshToken = this.generateRefreshToken(email);
+
+        return new TokenDto(accessToken, refreshToken);
+    }
+
+    public TokenDto generateToken(String email) throws EntityNotFoundException {
+
+        String accessToken = this.generateTokenBy(email);
+        String refreshToken = this.generateRefreshToken(email);
+
+        return new TokenDto(accessToken, refreshToken);
     }
 
     public String getUsername(String token) {

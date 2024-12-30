@@ -1,6 +1,7 @@
 package com.example.panttegi.config;
 
 import com.example.panttegi.config.interceptor.BoardRoleInterceptor;
+import com.example.panttegi.config.interceptor.UserRoleInterceptor;
 import com.example.panttegi.config.interceptor.WorkspaceRoleInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +15,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
 
     private final WorkspaceRoleInterceptor workspaceRoleInterceptor;
     private final BoardRoleInterceptor boardRoleInterceptor;
+    private final UserRoleInterceptor userRoleInterceptor;
 
     private static final String[] WORKSPACE_PATH_LIST = {"/api/workspaces/{workspaceId}/invite-member", "/api/workspaces/{workspaceId}"};
     private static final String[] BOARD_PATH_LIST = {"/api/workspaces/**"};
@@ -30,5 +32,10 @@ public class InterceptorConfig implements WebMvcConfigurer {
                 .addPathPatterns(BOARD_PATH_LIST)
                 .excludePathPatterns(BOARD_WHITE_LIST)
                 .order(Ordered.HIGHEST_PRECEDENCE + 1);
+
+        registry.addInterceptor(userRoleInterceptor)
+                .addPathPatterns(BOARD_PATH_LIST)
+                .excludePathPatterns(BOARD_WHITE_LIST)
+                .order(Ordered.HIGHEST_PRECEDENCE + 2);
     }
 }

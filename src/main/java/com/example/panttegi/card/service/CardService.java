@@ -1,12 +1,12 @@
 package com.example.panttegi.card.service;
 
 import com.example.panttegi.card.dto.CardRankingResponseDto;
-import com.example.panttegi.board.entity.Board;
-import com.example.panttegi.board.repository.BoardRepository;
 import com.example.panttegi.card.dto.CardResponseDto;
 import com.example.panttegi.card.entity.Card;
 import com.example.panttegi.card.repository.CardRepository;
 import com.example.panttegi.common.Const;
+import com.example.panttegi.error.errorcode.ErrorCode;
+import com.example.panttegi.error.exception.CustomException;
 import com.example.panttegi.file.entity.File;
 import com.example.panttegi.file.repository.FileRepository;
 import com.example.panttegi.list.entity.BoardList;
@@ -30,8 +30,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -117,27 +115,39 @@ public class CardService {
             String email, Long managerId, Long listId, List<Long> fileIds
     ) {
 
-        Card card = cardRepository.findByIdOrElseThrow(cardId);
-        Card beforeCard = beforeCardId != 0 ? cardRepository.findByIdOrElseThrow(beforeCardId) : null;
-        Card afterCard = afterCardId != 0 ? cardRepository.findByIdOrElseThrow(afterCardId) : null;
-        User user = userRepository.findByEmailOrElseThrow(email);
-        User manager = userRepository.findByIdOrElseThrow(managerId);
-        BoardList boardList = listRepository.findByIdOrElseThrow(listId);
-        List<File> files = fileIds.stream()
-                .map(fileRepository::findByIdOrElseThrow)
-                .toList();
+        String lockKey = "updateCard:lock" + cardId;
 
-        card.updateTitle(title);
-        card.updateDescription(description);
-        card.updatePosition(LexoRank.getMiddleRank(
-                beforeCard != null ? beforeCard.getPosition() : null,
-                afterCard != null ? afterCard.getPosition() : null));
-        card.updateEndAt(endAt);
-        card.updateManager(manager);
-        card.updateBoardList(boardList);
-        card.updateFiles(files);
+        Boolean lockAcquired = redisTemplate.opsForValue().setIfAbsent(lockKey, "locked", Const.LOCK_EXPIRATION_TIME, TimeUnit.MILLISECONDS);
 
-        return new CardResponseDto(cardRepository.save(card));
+        if (Boolean.FALSE.equals(lockAcquired)) {
+            throw new CustomException(ErrorCode.CONCURRENCY_CONFLICT);
+        }
+
+        try {
+            Card card = cardRepository.findByIdOrElseThrow(cardId);
+            Card beforeCard = beforeCardId != 0 ? cardRepository.findByIdOrElseThrow(beforeCardId) : null;
+            Card afterCard = afterCardId != 0 ? cardRepository.findByIdOrElseThrow(afterCardId) : null;
+            User user = userRepository.findByEmailOrElseThrow(email);
+            User manager = userRepository.findByIdOrElseThrow(managerId);
+            BoardList boardList = listRepository.findByIdOrElseThrow(listId);
+            List<File> files = fileIds.stream()
+                    .map(fileRepository::findByIdOrElseThrow)
+                    .toList();
+
+            card.updateTitle(title);
+            card.updateDescription(description);
+            card.updatePosition(LexoRank.getMiddleRank(
+                    beforeCard != null ? beforeCard.getPosition() : null,
+                    afterCard != null ? afterCard.getPosition() : null));
+            card.updateEndAt(endAt);
+            card.updateManager(manager);
+            card.updateBoardList(boardList);
+            card.updateFiles(files);
+
+            return new CardResponseDto(cardRepository.save(card));
+        } finally {
+            redisTemplate.delete(lockKey);
+        }
     }
 
     // 카드 삭제
