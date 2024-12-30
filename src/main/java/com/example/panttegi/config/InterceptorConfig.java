@@ -35,6 +35,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
 
         registry.addInterceptor(userRoleInterceptor)
                 .addPathPatterns(BOARD_PATH_LIST)
+                .excludePathPatterns(BOARD_WHITE_LIST)
                 .order(Ordered.HIGHEST_PRECEDENCE + 2);
     }
 }
