@@ -29,12 +29,6 @@ public class FileController {
         return new ResponseEntity<>(new CommonListResDto<>("파일 업로드 완료", response), HttpStatus.CREATED);
     }
 
-    @GetMapping
-    public ResponseEntity<CommonListResDto<FileResponseDto>> getFiles(@RequestParam Long cardId) {
-        List<FileResponseDto> response = fileService.getFiles(cardId);
-        return new ResponseEntity<>(new CommonListResDto<>("파일 조회 완료", response), HttpStatus.OK);
-    }
-
     @DeleteMapping("/{fileId}")
     public ResponseEntity<Void> deleteFile(
             @PathVariable Long fileId,
