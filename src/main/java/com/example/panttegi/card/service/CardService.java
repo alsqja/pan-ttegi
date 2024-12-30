@@ -48,7 +48,7 @@ public class CardService {
 
     // 카드 생성
     public CardResponseDto postCard(
-            String title, String description, Long beforeCardId, Long afterCardId, LocalDateTime endAt,
+            String title, String description, LocalDateTime endAt,
             String email, Long managerId, Long listId, List<Long> fileIds
     ) {
 
@@ -57,24 +57,15 @@ public class CardService {
 
         BoardList boardList = listRepository.findByIdOrElseThrow(listId);
 
-        if (beforeCardId == 0 && afterCardId == 0) {
-            boolean isExist = cardRepository.existsByPositionAndBoardList("m", boardList);
+        List<String> positionList = cardRepository.findLastPosition(listId);
 
-            if (isExist) {
-                throw new CustomException(ErrorCode.BAD_REQUEST);
-            }
-        }
-
-        Card beforeCard = beforeCardId != 0 ? cardRepository.findByIdOrElseThrow(beforeCardId) : null;
-        Card afterCard = afterCardId != 0 ? cardRepository.findByIdOrElseThrow(afterCardId) : null;
+        String beforePosition = positionList.isEmpty() ? null : positionList.get(0);
 
         List<File> files = fileIds.stream()
                 .map(fileRepository::findByIdOrElseThrow)
                 .toList();
 
-        String position = LexoRank.getMiddleRank(
-                beforeCard != null ? beforeCard.getPosition() : null,
-                afterCard != null ? afterCard.getPosition() : null);
+        String position = LexoRank.getMiddleRank(beforePosition, null);
 
         Card card = new Card(title, description, position, endAt,
                 user, manager, boardList, files);

@@ -44,8 +44,6 @@ public class CardController {
         CardResponseDto card = cardService.postCard(
                 postCardRequestDto.getTitle(),
                 postCardRequestDto.getDescription(),
-                postCardRequestDto.getBeforeCardId(),
-                postCardRequestDto.getAfterCardId(),
                 postCardRequestDto.getEndAt(),
                 authentication.getName(),
                 postCardRequestDto.getManagerId(),

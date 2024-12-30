@@ -3,13 +3,14 @@ package com.example.panttegi.card.repository;
 import com.example.panttegi.card.entity.Card;
 import com.example.panttegi.error.errorcode.ErrorCode;
 import com.example.panttegi.error.exception.CustomException;
-import com.example.panttegi.list.entity.BoardList;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface CardRepository extends JpaRepository<Card, Long> {
@@ -37,5 +38,11 @@ public interface CardRepository extends JpaRepository<Card, Long> {
 
     Card findTopByOrderByPositionDesc();
 
-    boolean existsByPositionAndBoardList(String m, BoardList boardList);
+    @Query("""
+                SELECT c.position FROM Card c
+                JOIN FETCH BoardList l
+                WHERE l.id = :listId
+                ORDER BY c.position
+            """)
+    List<String> findLastPosition(Long listId);
 }
