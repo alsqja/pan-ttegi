@@ -3,6 +3,7 @@ package com.example.panttegi.card.repository;
 import com.example.panttegi.card.entity.Card;
 import com.example.panttegi.error.errorcode.ErrorCode;
 import com.example.panttegi.error.exception.CustomException;
+import com.example.panttegi.list.entity.BoardList;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -35,4 +36,6 @@ public interface CardRepository extends JpaRepository<Card, Long> {
             Pageable pageable);
 
     Card findTopByOrderByPositionDesc();
+
+    boolean existsByPositionAndBoardList(String m, BoardList boardList);
 }

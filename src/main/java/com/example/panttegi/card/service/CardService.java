@@ -56,6 +56,15 @@ public class CardService {
         User manager = userRepository.findByIdOrElseThrow(managerId);
 
         BoardList boardList = listRepository.findByIdOrElseThrow(listId);
+
+        if (beforeCardId == 0 && afterCardId == 0) {
+            boolean isExist = cardRepository.existsByPositionAndBoardList("m", boardList);
+
+            if (isExist) {
+                throw new CustomException(ErrorCode.BAD_REQUEST);
+            }
+        }
+
         Card beforeCard = beforeCardId != 0 ? cardRepository.findByIdOrElseThrow(beforeCardId) : null;
         Card afterCard = afterCardId != 0 ? cardRepository.findByIdOrElseThrow(afterCardId) : null;
 
