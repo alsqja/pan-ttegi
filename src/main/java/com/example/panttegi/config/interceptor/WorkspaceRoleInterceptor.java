@@ -36,7 +36,7 @@ public class WorkspaceRoleInterceptor implements HandlerInterceptor {
         }
 
         String email = jwtProvider.getUsername(token);
-        Long workspaceId = Long.parseLong(extractPathVariable(request, "workspaceId"));
+        Long workspaceId = Long.parseLong(extractPathVariable(request));
 
         if (!hasAccessWorkspace(email, workspaceId)) {
             throw new CustomException(ErrorCode.FORBIDDEN_PERMISSION);
