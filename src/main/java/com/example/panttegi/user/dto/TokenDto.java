@@ -6,9 +6,8 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class LoginResDto implements BaseDtoDataType {
+public class TokenDto implements BaseDtoDataType {
 
-    private final String tokenAuthScheme;
     private final String accessToken;
     private final String refreshToken;
 }
