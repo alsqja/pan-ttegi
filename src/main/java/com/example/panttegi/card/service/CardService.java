@@ -1,12 +1,12 @@
 package com.example.panttegi.card.service;
 
 import com.example.panttegi.card.dto.CardRankingResponseDto;
-import com.example.panttegi.board.entity.Board;
-import com.example.panttegi.board.repository.BoardRepository;
 import com.example.panttegi.card.dto.CardResponseDto;
 import com.example.panttegi.card.entity.Card;
 import com.example.panttegi.card.repository.CardRepository;
 import com.example.panttegi.common.Const;
+import com.example.panttegi.error.errorcode.ErrorCode;
+import com.example.panttegi.error.exception.CustomException;
 import com.example.panttegi.file.entity.File;
 import com.example.panttegi.file.repository.FileRepository;
 import com.example.panttegi.list.entity.BoardList;
@@ -14,6 +14,8 @@ import com.example.panttegi.list.repository.ListRepository;
 import com.example.panttegi.user.entity.User;
 import com.example.panttegi.user.repository.UserRepository;
 import com.example.panttegi.util.LexoRank;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,8 +33,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import java.util.stream.Collectors;
-
 @Service
 @RequiredArgsConstructor
 public class CardService {
@@ -44,10 +44,11 @@ public class CardService {
 
     private final StringRedisTemplate redisTemplate;
     private final ZSetOperations<String, String> zSetOperations;
+    private final ObjectMapper objectMapper;
 
     // 카드 생성
     public CardResponseDto postCard(
-            String title, String description, Long beforeCardId, Long afterCardId, LocalDateTime endAt,
+            String title, String description, LocalDateTime endAt,
             String email, Long managerId, Long listId, List<Long> fileIds
     ) {
 
@@ -55,16 +56,16 @@ public class CardService {
         User manager = userRepository.findByIdOrElseThrow(managerId);
 
         BoardList boardList = listRepository.findByIdOrElseThrow(listId);
-        Card beforeCard = beforeCardId != 0 ? cardRepository.findByIdOrElseThrow(beforeCardId) : null;
-        Card afterCard = afterCardId != 0 ? cardRepository.findByIdOrElseThrow(afterCardId) : null;
+
+        List<String> positionList = cardRepository.findLastPosition(listId);
+
+        String beforePosition = positionList.isEmpty() ? null : positionList.get(0);
 
         List<File> files = fileIds.stream()
                 .map(fileRepository::findByIdOrElseThrow)
                 .toList();
 
-        String position = LexoRank.getMiddleRank(
-                beforeCard != null ? beforeCard.getPosition() : null,
-                afterCard != null ? afterCard.getPosition() : null);
+        String position = LexoRank.getMiddleRank(beforePosition, null);
 
         Card card = new Card(title, description, position, endAt,
                 user, manager, boardList, files);
@@ -82,8 +83,8 @@ public class CardService {
     }
 
     // 카드 랭킹 조회
-    public List<CardRankingResponseDto> getCardRanking(int limit) {
-        Set<ZSetOperations.TypedTuple<String>> rankingSet = zSetOperations.reverseRangeWithScores(Const.CARD_VIEW_RANKING_KEY, 0, limit - 1);
+    public List<CardRankingResponseDto> getCardRanking() {
+        Set<ZSetOperations.TypedTuple<String>> rankingSet = zSetOperations.reverseRangeWithScores(Const.CARD_VIEW_RANKING_KEY, 0, 9);
 
         if (rankingSet == null || rankingSet.isEmpty()) {
             return List.of();
@@ -91,9 +92,24 @@ public class CardService {
 
         return rankingSet.stream().map(tuple -> {
             Long cardId = Long.parseLong(Objects.requireNonNull(tuple.getValue()));
-            Card card = cardRepository.findByIdOrElseThrow(cardId);
             Double viewCount = Objects.requireNonNull(tuple.getScore());
             Long rank = zSetOperations.reverseRank(Const.CARD_VIEW_RANKING_KEY, tuple.getValue()) + 1;
+
+            String cardKey = Const.CARD_DATA_KEY_PREFIX + cardId;
+            String cardJson = redisTemplate.opsForValue().get(cardKey);
+            Card card = null;
+
+            if (cardJson != null) {
+                try {
+                    card = objectMapper.readValue(cardJson, Card.class);
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (card == null) {
+                return new CardRankingResponseDto(null, viewCount, rank);
+            }
 
             return new CardRankingResponseDto(new CardResponseDto(card), viewCount, rank);
         }).toList();
@@ -117,27 +133,39 @@ public class CardService {
             String email, Long managerId, Long listId, List<Long> fileIds
     ) {
 
-        Card card = cardRepository.findByIdOrElseThrow(cardId);
-        Card beforeCard = beforeCardId != 0 ? cardRepository.findByIdOrElseThrow(beforeCardId) : null;
-        Card afterCard = afterCardId != 0 ? cardRepository.findByIdOrElseThrow(afterCardId) : null;
-        User user = userRepository.findByEmailOrElseThrow(email);
-        User manager = userRepository.findByIdOrElseThrow(managerId);
-        BoardList boardList = listRepository.findByIdOrElseThrow(listId);
-        List<File> files = fileIds.stream()
-                .map(fileRepository::findByIdOrElseThrow)
-                .toList();
+        String lockKey = "updateCard:lock" + cardId;
 
-        card.updateTitle(title);
-        card.updateDescription(description);
-        card.updatePosition(LexoRank.getMiddleRank(
-                beforeCard != null ? beforeCard.getPosition() : null,
-                afterCard != null ? afterCard.getPosition() : null));
-        card.updateEndAt(endAt);
-        card.updateManager(manager);
-        card.updateBoardList(boardList);
-        card.updateFiles(files);
+        Boolean lockAcquired = redisTemplate.opsForValue().setIfAbsent(lockKey, "locked", Const.LOCK_EXPIRATION_TIME, TimeUnit.MILLISECONDS);
 
-        return new CardResponseDto(cardRepository.save(card));
+        if (Boolean.FALSE.equals(lockAcquired)) {
+            throw new CustomException(ErrorCode.CONCURRENCY_CONFLICT);
+        }
+
+        try {
+            Card card = cardRepository.findByIdOrElseThrow(cardId);
+            Card beforeCard = beforeCardId != 0 ? cardRepository.findByIdOrElseThrow(beforeCardId) : null;
+            Card afterCard = afterCardId != 0 ? cardRepository.findByIdOrElseThrow(afterCardId) : null;
+            User user = userRepository.findByEmailOrElseThrow(email);
+            User manager = userRepository.findByIdOrElseThrow(managerId);
+            BoardList boardList = listRepository.findByIdOrElseThrow(listId);
+            List<File> files = fileIds.stream()
+                    .map(fileRepository::findByIdOrElseThrow)
+                    .toList();
+
+            card.updateTitle(title);
+            card.updateDescription(description);
+            card.updatePosition(LexoRank.getMiddleRank(
+                    beforeCard != null ? beforeCard.getPosition() : null,
+                    afterCard != null ? afterCard.getPosition() : null));
+            card.updateEndAt(endAt);
+            card.updateManager(manager);
+            card.updateBoardList(boardList);
+            card.updateFiles(files);
+
+            return new CardResponseDto(cardRepository.save(card));
+        } finally {
+            redisTemplate.delete(lockKey);
+        }
     }
 
     // 카드 삭제
@@ -184,5 +212,31 @@ public class CardService {
             redisTemplate.delete(key);
         }
         redisTemplate.delete(Const.CARD_VIEW_RANKING_KEY);
+    }
+
+    @Scheduled(cron = "0 0 * * * ?")
+    public void cacheTopRankingCards() {
+
+        System.out.println("______________________________ start _________________________________");
+        int limit = 10;
+        Set<ZSetOperations.TypedTuple<String>> rankingSet = zSetOperations.reverseRangeWithScores(Const.CARD_VIEW_RANKING_KEY, 0, limit - 1);
+
+        if (rankingSet == null || rankingSet.isEmpty()) {
+            return;
+        }
+
+        List<Long> cardIds = rankingSet.stream().map(t -> Long.parseLong(Objects.requireNonNull(t.getValue()))).toList();
+
+        List<Card> cards = cardRepository.findAllById(cardIds);
+
+        for (Card card : cards) {
+            String cardKey = Const.CARD_DATA_KEY_PREFIX + card.getId();
+            try {
+                String cardJson = objectMapper.writeValueAsString(card);
+                redisTemplate.opsForValue().set(cardKey, cardJson, 1, TimeUnit.HOURS);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

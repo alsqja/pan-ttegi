@@ -26,9 +26,6 @@ public class S3Uploader {
         String originalFilename = file.getOriginalFilename();
         String uniqueFilename = UUID.randomUUID() + "_" + originalFilename;
 
-        System.out.println("Original filename: " + originalFilename);
-        System.out.println("Generated unique filename: " + uniqueFilename);
-
         try {
             s3Client.putObject(
                     PutObjectRequest.builder()

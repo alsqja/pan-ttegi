@@ -1,12 +1,14 @@
 package com.example.panttegi.user.service;
 
+import com.example.panttegi.enums.AuthenticationScheme;
 import com.example.panttegi.error.errorcode.ErrorCode;
 import com.example.panttegi.error.exception.CustomException;
 import com.example.panttegi.user.dto.LoginResDto;
+import com.example.panttegi.user.dto.TokenDto;
 import com.example.panttegi.user.dto.UserResponseDto;
 import com.example.panttegi.user.entity.User;
+import com.example.panttegi.user.repository.RefreshTokenRepository;
 import com.example.panttegi.user.repository.UserRepository;
-import com.example.panttegi.util.AuthenticationScheme;
 import com.example.panttegi.util.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,6 +25,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     public UserResponseDto signup(User user) {
 
@@ -52,8 +55,24 @@ public class AuthService {
                 )
         );
 
-        String accessToken = jwtProvider.generateToken(authentication);
+        TokenDto tokens = jwtProvider.generateToken(authentication);
 
-        return new LoginResDto(AuthenticationScheme.BEARER.getName(), accessToken);
+        return new LoginResDto(AuthenticationScheme.BEARER.getName(), tokens.getAccessToken(), tokens.getRefreshToken());
+    }
+
+    public TokenDto refresh(String accessToken, String refreshToken) {
+
+        if (!jwtProvider.validRefreshToken(refreshToken)) {
+            throw new CustomException(ErrorCode.EXPIRED_TOKEN);
+        }
+
+        String email = jwtProvider.getUsername(refreshToken);
+        String savedRequestToken = refreshTokenRepository.getRefreshToken(email);
+
+        if (!refreshToken.equals(savedRequestToken)) {
+            throw new CustomException(ErrorCode.EXPIRED_TOKEN);
+        }
+
+        return jwtProvider.generateToken(email);
     }
 }

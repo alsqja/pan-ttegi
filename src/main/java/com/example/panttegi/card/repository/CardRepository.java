@@ -10,6 +10,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface CardRepository extends JpaRepository<Card, Long> {
 
@@ -35,4 +37,12 @@ public interface CardRepository extends JpaRepository<Card, Long> {
             Pageable pageable);
 
     Card findTopByOrderByPositionDesc();
+
+    @Query("""
+                SELECT c.position FROM Card c
+                JOIN c.boardList l
+                WHERE l.id = :listId
+                ORDER BY c.position DESC
+            """)
+    List<String> findLastPosition(Long listId);
 }

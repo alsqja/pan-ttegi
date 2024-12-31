@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/workspaces/{workspaceId}/cards")
@@ -45,8 +44,6 @@ public class CardController {
         CardResponseDto card = cardService.postCard(
                 postCardRequestDto.getTitle(),
                 postCardRequestDto.getDescription(),
-                postCardRequestDto.getBeforeCardId(),
-                postCardRequestDto.getAfterCardId(),
                 postCardRequestDto.getEndAt(),
                 authentication.getName(),
                 postCardRequestDto.getManagerId(),
@@ -58,9 +55,9 @@ public class CardController {
     }
 
     @GetMapping("/ranking")
-    public ResponseEntity<CommonListResDto<CardRankingResponseDto>> getCardRanking(@RequestParam(defaultValue = "10") int limit) {
+    public ResponseEntity<CommonListResDto<CardRankingResponseDto>> getCardRanking() {
 
-        List<CardRankingResponseDto> rankings = cardService.getCardRanking(limit);
+        List<CardRankingResponseDto> rankings = cardService.getCardRanking();
 
         return new ResponseEntity<>(new CommonListResDto<>("카드 랭킹 조회 완료", rankings), HttpStatus.OK);
     }

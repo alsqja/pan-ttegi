@@ -9,11 +9,12 @@ import com.example.panttegi.util.JwtProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import static com.example.panttegi.config.interceptor.InterceptorUtils.extractPathVariable;
-import static com.example.panttegi.config.interceptor.InterceptorUtils.getTokenFromRequest;
 
 @Component
 @RequiredArgsConstructor
@@ -29,14 +30,10 @@ public class WorkspaceRoleInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        String token = getTokenFromRequest(request);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (!jwtProvider.validToken(token)) {
-            throw new CustomException(ErrorCode.EXPIRED_TOKEN);
-        }
-
-        String email = jwtProvider.getUsername(token);
-        Long workspaceId = Long.parseLong(extractPathVariable(request, "workspaceId"));
+        String email = authentication.getName();
+        Long workspaceId = Long.parseLong(extractPathVariable(request));
 
         if (!hasAccessWorkspace(email, workspaceId)) {
             throw new CustomException(ErrorCode.FORBIDDEN_PERMISSION);

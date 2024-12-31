@@ -1,8 +1,7 @@
 package com.example.panttegi.config.filter;
 
-import com.example.panttegi.util.AuthenticationScheme;
+import com.example.panttegi.enums.AuthenticationScheme;
 import com.example.panttegi.util.JwtProvider;
-import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -47,7 +46,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         String token = getTokenFromRequest(request);
         if (!jwtProvider.validToken(token)) {
-            //  refreshToken 설정?
             return;
         }
 

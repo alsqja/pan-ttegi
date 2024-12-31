@@ -4,10 +4,21 @@ import com.example.panttegi.board.entity.Board;
 import com.example.panttegi.card.entity.Card;
 import com.example.panttegi.common.BaseEntity;
 import com.example.panttegi.user.entity.User;
-import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,8 +35,8 @@ public class BoardList extends BaseEntity {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "position", nullable = false)
-    private Double position;
+    @Column(name = "position", nullable = false, precision = 17, scale = 5)
+    private BigDecimal position;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -35,10 +46,11 @@ public class BoardList extends BaseEntity {
     @JoinColumn(name = "board_id")
     private Board board;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "boardList", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Card> cards = new ArrayList<>();
 
-    public BoardList(String title, Double position, User user, Board board) {
+    public BoardList(String title, BigDecimal position, User user, Board board) {
         this.title = title;
         this.position = position;
         this.user = user;
@@ -49,7 +61,7 @@ public class BoardList extends BaseEntity {
         this.title = title;
     }
 
-    public void updatePosition(Double position) {
+    public void updatePosition(BigDecimal position) {
         this.position = position;
     }
 }

@@ -17,6 +17,8 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -41,12 +43,12 @@ public class ListService {
             throw new CustomException(ErrorCode.BAD_REQUEST);
         }
 
-        List<BoardList> lists = listRepository.findByBoardId(boardId);
-        lists.sort(Comparator.comparing(BoardList::getPosition));
+        Long listCount = listRepository.countByBoardId(boardId);
 
-        Double lastPosition = lists.isEmpty() ? 1.0 : lists.get(lists.size() - 1).getPosition() + 1.0;
+        BigDecimal newPosition = BigDecimal.valueOf((listCount + 1) * 100);
 
-        BoardList boardList = new BoardList(title, lastPosition, user, board);
+        BoardList boardList = new BoardList(title, newPosition, user, board);
+
         return new ListResponseDto(listRepository.save(boardList));
     }
 
@@ -56,7 +58,6 @@ public class ListService {
         String lockKey = "updateList:lock" + listId;
 
         Boolean lockAcquired = redisTemplate.opsForValue().setIfAbsent(lockKey, "locked", Const.LOCK_EXPIRATION_TIME, TimeUnit.MILLISECONDS);
-        System.out.println("-----------------------------Lock Acquired: " + lockAcquired);
 
         if (Boolean.FALSE.equals(lockAcquired)) {
             throw new CustomException(ErrorCode.CONCURRENCY_CONFLICT);
@@ -73,6 +74,8 @@ public class ListService {
             List<BoardList> lists = listRepository.findByBoardId(targetList.getBoard().getId());
             lists.sort(Comparator.comparing(BoardList::getPosition));
 
+            targetIndex -= 1;
+
             if (targetIndex < 0 || targetIndex > lists.size()) {
                 redisTemplate.delete(lockKey);
                 throw new CustomException(ErrorCode.BAD_REQUEST);
@@ -82,7 +85,7 @@ public class ListService {
                 targetList.updateTitle(title);
             }
 
-            Double newPosition = calculateNewPosition(lists, targetIndex);
+            BigDecimal newPosition = calculateNewPosition(lists, targetIndex);
             targetList.updatePosition(newPosition);
 
             return new ListResponseDto(targetList);
@@ -102,22 +105,25 @@ public class ListService {
         listRepository.delete(boardList);
     }
 
-    private Double calculateNewPosition(List<BoardList> lists, int targetIndex) {
+    private BigDecimal calculateNewPosition(List<BoardList> lists, int targetIndex) {
+
         if (lists.isEmpty()) {
-            return 1.0;
+            return BigDecimal.valueOf(100);
         }
 
         if (targetIndex == 0) {
-            return lists.get(0).getPosition() / 2.0;
+            BigDecimal newPosition = lists.get(0).getPosition().divide(BigDecimal.valueOf(2));
+            if (newPosition.compareTo(BigDecimal.ZERO) <= 0) {
+                throw new CustomException(ErrorCode.BAD_REQUEST);
+            }
+            return newPosition;
+        } else if (targetIndex >= lists.size()) {
+            return lists.get(lists.size() - 1).getPosition().add(BigDecimal.valueOf(100));
+        } else {
+            BigDecimal prevPosition = lists.get(targetIndex - 1).getPosition();
+            BigDecimal nextPosition = lists.get(targetIndex).getPosition();
+
+            return prevPosition.add(nextPosition).divide(BigDecimal.valueOf(2), 6, RoundingMode.HALF_UP);
         }
-
-        if (targetIndex >= lists.size()) {
-            return lists.get(lists.size() - 1).getPosition() + 1.0;
-        }
-
-        Double prevPosition = lists.get(targetIndex - 1).getPosition();
-        Double nextPosition = lists.get(targetIndex).getPosition();
-
-        return (prevPosition + nextPosition) / 2.0;
     }
 }

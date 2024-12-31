@@ -18,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.test.annotation.Rollback;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -68,7 +69,7 @@ class ListServiceTest {
         Workspace savedWorkspace = workspaceRepository.save(testWorkspace);
         Board testBoard = new Board("color", "url", "boardName", savedUser, savedWorkspace);
         Board savedBoard = boardRepository.save(testBoard);
-        BoardList testBoardList = new BoardList("listTitle", 1.0, savedUser, savedBoard);
+        BoardList testBoardList = new BoardList("listTitle", BigDecimal.valueOf(100), savedUser, savedBoard);
         BoardList savedList = listRepository.save(testBoardList);
 
         BoardList targetList = listRepository.findById(savedList.getId())
